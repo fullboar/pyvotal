@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='pyvotal',
     version = '0.1',
@@ -23,5 +23,5 @@ setup(name='pyvotal',
     author_email = 'zz@rialabs.org',
     url = 'https://github.com/zerko/pyvotal',
     packages = ['pyvotal',],
-    requires = ['restclient', 'fluentxml']
+    install_requires = ['restclient', 'fluentxml']
 )
