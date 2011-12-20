@@ -15,8 +15,8 @@
 # limitations under the License.
 
 
-import restclient
-
+from client import Client
+from exceptions import PyvotalException
 
 class PTracker(object):
     """
@@ -27,29 +27,12 @@ class PTracker(object):
         Init PTracker
         If no token provided it would be requested using given user and password
         """
-        self.ssl = ssl
+        self.client = Client(ssl=ssl)
         if token is None:
             token = self._get_token_for_credentials(user, password)
         self.token = token
+        self.client.token = self.token
 
-    """
-    Properties
-    """
-    @property
-    def ssl(self):
-        return self._ssl
-
-    @ssl.setter
-    def ssl(self, enable_ssl):
-        self._ssl = enable_ssl
-        if enable_ssl:
-            self._protocol = 'https'
-        else:
-            self._protocol = 'http'
-
-    @property
-    def api_location(self):
-        return "%s://www.pivotaltracker.com/services/v3/" % self._protocol
 
     """
     Public methods
@@ -61,8 +44,6 @@ class PTracker(object):
     def _get_token_for_credentials(self, user=None, password=None):
         if user is None or password is None:
             raise PyvotalException("Provide user AND password")
-        print restclient.GET(self._endpoint_for('tokens/active'), credentials=(user, password))
-        return '123'
+        result = self.client.get('tokens/active', credentials=(user, password))
+        return result.root.guid[0]._texts[0]
 
-    def _endpoint_for(self, resource):
-        return "%s%s" % (self.api_location, resource)
