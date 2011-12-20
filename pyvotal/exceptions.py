@@ -23,7 +23,7 @@ class PyvotalException(Exception):
 
 class AccessDenied(Exception):
     """
-    API response has no xml but `access denied` string probably you have wrong token
+    API response has 401 http code probably you have wrong token
     """
 
 class AuthException(Exception):
