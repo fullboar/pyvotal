@@ -30,9 +30,14 @@ class PTracker(object):
         self.client = Client(ssl=ssl)
         if token is None:
             token = self._get_token_for_credentials(user, password)
-        self.token = token
-        self.client.token = self.token
+        self.client.token = token
 
+    """
+    Properties
+    """
+    @property
+    def token(self):
+        return self.client.token
 
     """
     Public methods
