@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import restclient
-import fluentxml
+from xml.etree.ElementTree import XML
 
 from exceptions import AccessDenied
 
@@ -51,14 +51,28 @@ class Client(object):
     Public methods
     """
     def get(self, resource, **kwargs):
+        kwargs = self._inject_token(kwargs)
         (resp, result) = restclient.GET(self._endpoint_for(resource), resp=True, **kwargs)
         
         if resp.status == 401:
             raise AccessDenied()
-        return fluentxml.Parser(result)
+        return XML(result)
         
     """
     Private methods
     """
     def _endpoint_for(self, resource):
         return "%s%s" % (self.api_location, resource)
+
+    def _inject_token(self, kwargs_dict):
+        """
+        Add X-TrackerToken header if we have one
+        """
+        if self.token:
+            if 'headers' in kwargs_dict:
+                kwargs_dict['headers']['X-TrackerToken'] = self.token
+            else:
+                kwargs_dict['headers'] = {'X-TrackerToken':self.token}
+
+        return kwargs_dict
+

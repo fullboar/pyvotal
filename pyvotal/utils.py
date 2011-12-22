@@ -14,14 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup
-
-setup(name='pyvotal',
-    version = '0.1',
-    description = 'pivotal tracker api client',
-    author = 'Anatoly Kudinov',
-    author_email = 'zz@rialabs.org',
-    url = 'https://github.com/fullboar/pyvotal',
-    packages = ['pyvotal',],
-    install_requires = ['restclient', 'dictshield']
-)
+def _node_text(etree, xpath):
+    """
+    shortcut function
+    """
+    return etree.find(xpath).text

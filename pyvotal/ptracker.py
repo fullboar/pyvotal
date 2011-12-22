@@ -17,6 +17,8 @@
 
 from client import Client
 from exceptions import PyvotalException
+from projects import ProjectManager
+
 
 class PTracker(object):
     """
@@ -31,6 +33,7 @@ class PTracker(object):
         if token is None:
             token = self._get_token_for_credentials(user, password)
         self.client.token = token
+        self.projects = ProjectManager(self.client)
 
     """
     Properties
@@ -49,6 +52,6 @@ class PTracker(object):
     def _get_token_for_credentials(self, user=None, password=None):
         if user is None or password is None:
             raise PyvotalException("Provide user AND password")
-        result = self.client.get('tokens/active', credentials=(user, password))
-        return result.root.guid[0]._texts[0]
+        tree = self.client.get('tokens/active', credentials=(user, password))
+        return tree.find('guid').text
 

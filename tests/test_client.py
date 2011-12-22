@@ -46,6 +46,13 @@ class TestClient:
         self.c.get('location', **kwargs)
         restclient.GET.assert_called_with(self.c._endpoint_for('location'), resp=True, **kwargs)
 
+    @patch('restclient.GET', Mock(return_value=(Mock(), stub_body)))
+    def test_injects_token_header_if_given(self):
+        kwargs = dict(key='value', key2=2)
+        self.ssl_c.token = 'tok'
+        self.ssl_c.get('location', **kwargs)
+        restclient.GET.assert_called_with(self.ssl_c._endpoint_for('location'), resp=True, headers={'X-TrackerToken':'tok'},  **kwargs)
+
     @raises(AccessDenied)
     @patch('restclient.GET', Mock(return_value=(resp401, stub_body)))
     def test_raises_exception_on_access_denied(self):

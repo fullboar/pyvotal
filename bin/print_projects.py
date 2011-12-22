@@ -14,14 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup
+import argparse
+from pyvotal import PTracker
 
-setup(name='pyvotal',
-    version = '0.1',
-    description = 'pivotal tracker api client',
-    author = 'Anatoly Kudinov',
-    author_email = 'zz@rialabs.org',
-    url = 'https://github.com/fullboar/pyvotal',
-    packages = ['pyvotal',],
-    install_requires = ['restclient', 'dictshield']
-)
+parser = argparse.ArgumentParser(description='List projects for given user.')
+parser.add_argument('user', help='pivotal username (email)')
+parser.add_argument('password', help='password for given user')
+
+args = parser.parse_args()
+
+p = PTracker(user=args.user, password = args.password)
+
+for project in p.projects.all():
+    print "#%s '%s' @ %s\n" % (project.id, project.name, project.account)
