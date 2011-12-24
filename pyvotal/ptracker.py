@@ -52,6 +52,6 @@ class PTracker(object):
     def _get_token_for_credentials(self, user=None, password=None):
         if user is None or password is None:
             raise PyvotalException("Provide user AND password")
-        tree = self.client.get('tokens/active', credentials=(user, password))
+        tree = self.client.get('tokens/active', auth=(user, password))
         return tree.find('guid').text
 

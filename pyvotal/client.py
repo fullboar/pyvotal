@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import restclient
+import requests
 from xml.etree.ElementTree import XML
 
 from exceptions import AccessDenied
@@ -52,11 +52,11 @@ class Client(object):
     """
     def get(self, resource, **kwargs):
         kwargs = self._inject_token(kwargs)
-        (resp, result) = restclient.GET(self._endpoint_for(resource), resp=True, **kwargs)
-        
-        if resp.status == 401:
+        resp = requests.get(self._endpoint_for(resource), **kwargs)
+
+        if resp.status_code == 401:
             raise AccessDenied()
-        return XML(result)
+        return XML(resp.content)
         
     """
     Private methods

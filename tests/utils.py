@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup
 
-setup(name='pyvotal',
-    version = '0.1',
-    description = 'pivotal tracker api client',
-    author = 'Anatoly Kudinov',
-    author_email = 'zz@rialabs.org',
-    url = 'https://github.com/fullboar/pyvotal',
-    packages = ['pyvotal',],
-    install_requires = ['requests', 'dictshield']
-)
+from mock import Mock
+
+def _M(resp_body, status_code = 200):
+    """
+    returns mock for requests with given response body
+    """
+    mock = Mock()
+    mock.status_code = status_code
+    mock.content = resp_body
+    return Mock(return_value = mock)

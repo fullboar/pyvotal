@@ -16,12 +16,14 @@
 
 from nose.tools import raises
 
-from mock import Mock, patch
+from mock import patch
 
-import restclient
+#import requests
 
 from pyvotal.ptracker import PTracker
 from pyvotal.projects import ProjectManager, Project
+
+from tests.utils import _M
 
 token_body = """<?xml version="1.0" encoding="UTF-8"?>
   <token>
@@ -157,8 +159,11 @@ projects_body = """<?xml version="1.0" encoding="UTF-8"?>
     </projects>
 """
 
+
+
+
 class TestPtracker:
-    @patch('restclient.GET', Mock(return_value=(Mock(), token_body)))
+    @patch('requests.get', _M(token_body))
     def test_retrives_token_for_credentials_if_no_token_given(self):
         p = PTracker(user='user', password='pass')
         assert p.token == 'c93f12c71bec27843c1d84b3bdd547f3'
@@ -166,7 +171,7 @@ class TestPtracker:
 
 
 class TestProjectManager:
-    @patch('restclient.GET', Mock(return_value=(Mock(), token_body)))
+    @patch('requests.get', _M(token_body))
     def setup(self):
         self.p = PTracker(user='user', password='pass')
 
@@ -174,13 +179,13 @@ class TestProjectManager:
     def test_available_at_ptracer_dot_projects(self):
         assert isinstance(self.p.projects, ProjectManager)
 
-    @patch('restclient.GET', Mock(return_value=(Mock(), project_body)))
+    @patch('requests.get', _M(project_body))
     def test_can_get_single_project_by_id(self):
         project = self.p.projects.get(31337)
 
         assert project.id == 31337
 
-    @patch('restclient.GET', Mock(return_value=(Mock(), projects_body)))
+    @patch('requests.get', _M(projects_body))
     def test_can_get_all_projects(self):
         projects = self.p.projects.all()
 

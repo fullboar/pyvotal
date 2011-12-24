@@ -18,14 +18,13 @@ from nose.tools import raises
 
 from mock import Mock, patch
 
-import restclient
+import requests
 
 from pyvotal.client import Client
 from pyvotal.exceptions import AccessDenied
 
+from tests.utils import _M
 
-resp401 = Mock()
-resp401.status = 401
 stub_body = """<?xml version="1.0" encoding="UTF-8"?>
   <root>
   <node />
@@ -40,21 +39,21 @@ class TestClient:
         assert self.ssl_c.api_location == 'https://www.pivotaltracker.com/services/v3/'
         assert self.c.api_location == 'http://www.pivotaltracker.com/services/v3/'
 
-    @patch('restclient.GET', Mock(return_value=(Mock(), stub_body)))
+    @patch('requests.get', _M( stub_body))
     def test_passes_given_kwargs_to_restclient(self):
         kwargs = dict(key='value', key2=2)
         self.c.get('location', **kwargs)
-        restclient.GET.assert_called_with(self.c._endpoint_for('location'), resp=True, **kwargs)
+        requests.get.assert_called_with(self.c._endpoint_for('location'), **kwargs)
 
-    @patch('restclient.GET', Mock(return_value=(Mock(), stub_body)))
+    @patch('requests.get', _M(stub_body))
     def test_injects_token_header_if_given(self):
         kwargs = dict(key='value', key2=2)
         self.ssl_c.token = 'tok'
         self.ssl_c.get('location', **kwargs)
-        restclient.GET.assert_called_with(self.ssl_c._endpoint_for('location'), resp=True, headers={'X-TrackerToken':'tok'},  **kwargs)
+        requests.get.assert_called_with(self.ssl_c._endpoint_for('location'), headers={'X-TrackerToken':'tok'},  **kwargs)
 
     @raises(AccessDenied)
-    @patch('restclient.GET', Mock(return_value=(resp401, stub_body)))
+    @patch('requests.get', _M(stub_body, status_code=401))
     def test_raises_exception_on_access_denied(self):
         self.c.get('location')
         
