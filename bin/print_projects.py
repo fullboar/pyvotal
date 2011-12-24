@@ -15,15 +15,18 @@
 # limitations under the License.
 
 import argparse
+from getpass import getpass
+
 from pyvotal import PTracker
 
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')
-parser.add_argument('password', help='password for given user')
 
 args = parser.parse_args()
 
-p = PTracker(user=args.user, password = args.password)
+password = getpass()
+
+p = PTracker(user=args.user, password=password)
 
 for project in p.projects.all():
     print "#%s '%s' @ %s\n" % (project.id, project.name, project.account)

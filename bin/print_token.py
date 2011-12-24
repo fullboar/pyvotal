@@ -15,14 +15,17 @@
 # limitations under the License.
 
 import argparse
+from getpass import getpass
+
 from pyvotal import PTracker
 
 parser = argparse.ArgumentParser(description='Print user token from pivotal tracker.')
 parser.add_argument('user', help='pivotal username (email)')
-parser.add_argument('password', help='password for given user')
 
 args = parser.parse_args()
 
-p = PTracker(user=args.user, password = args.password)
+password = getpass()
+
+p = PTracker(user=args.user, password=password)
 
 print "%s token: %s" % (args.user, p.token)
