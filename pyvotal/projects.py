@@ -14,11 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from xml.etree.ElementTree import Element, SubElement, dump, tostring
+
+from dateutil import parser
 
 from dictshield.document import Document, diff_id_field
 from dictshield.fields import IntField, StringField, BooleanField, DateTimeField
 
+from pyvotal.tz import tzd
+
 from utils import _node_text
+
+class PyDateTimeField(DateTimeField):
+    """
+    DictShield DateTimeField wrapper which knows
+    how to deal with pivotal tracker date strings
+    """
+    def __set__(self, instance, value):
+        """If `value` is a string it is converted to datetime via python-dateutil.
+        
+        A datetime may be used (and is encouraged).
+        """
+        if not value:
+            return
+
+        if isinstance(value, (str, unicode)):
+            value = parser.parse(value, tzinfos=tzd)
+
+        instance._data[self.field_name] = value
+
 
 class ProjectManager(object):
     """
@@ -30,7 +54,8 @@ class ProjectManager(object):
 
     def get(self, project_id):
         """
-        Get a single project by id, throws ProjectNotFound if no project is match given id
+        Get a single project by id, 
+        FIXME IMPLEMENT throws ProjectNotFound if no project is match given id
         """
         # FIXME catch 404 here
         etree = self.client.get('/projects/%s' % project_id)
@@ -39,6 +64,9 @@ class ProjectManager(object):
         return project
 
     def all(self):
+        """
+        Return list of all projects
+        """
         etree = self.client.get('/projects')
         # FIXME
         result = list()
@@ -70,7 +98,7 @@ class Project(Document):
     use_https = BooleanField()
     bugs_and_chores_are_estimatable = BooleanField()
     commit_mode = BooleanField()
-#    last_activity_at = DateTimeField()
+    last_activity_at = PyDateTimeField()
 
 
     """
@@ -78,10 +106,26 @@ class Project(Document):
     """
     def _from_etree(self, etree):
         for name, field in self._fields.items():
-            try:
-                setattr(self, name, field.for_python(_node_text(etree, name)))
-            except:
-                pass
+            setattr(self, name, field.for_python(_node_text(etree, name)))
 
+    def _to_xml(self):
+        root = Element('project')
+        for name, field in sorted(self._fields.items()):
+            value = text=getattr(self, name)
+            if value is None:
+                # skip not filled fields
+                continue
 
+            attribs = dict()
+            if isinstance(field, IntField) and name is not 'id':
+                attribs['type']='integer'
+            if isinstance(field, DateTimeField):
+                attribs['type']='datetime'
+                value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
+
+            el = SubElement(root, name)
+            el.text = str(value)
+            el.attrib = attribs
+        return tostring(root)
+        #dump(root)
 
