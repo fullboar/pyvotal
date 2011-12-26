@@ -22,8 +22,8 @@ from dictshield.document import Document, diff_id_field
 from dictshield.fields import IntField, StringField, BooleanField, DateTimeField
 
 from pyvotal.tz import tzd
-
-from utils import _node_text
+from pyvotal.utils import _node_text
+from pyvotal.manager import ResourceManager
 
 class PyDateTimeField(DateTimeField):
     """
@@ -44,48 +44,14 @@ class PyDateTimeField(DateTimeField):
         instance._data[self.field_name] = value
 
 
-class ProjectManager(object):
+class ProjectManager(ResourceManager):
     """
     Class for project retrieval. Availeable as PTracker.projects
     """
 
     def __init__(self, client):
         self.client = client
-
-    def add(self, project):
-        """
-        Adds given project to pivotal tracker
-        """
-        etree = self.client.post('/projects', project._to_xml())
-        project = Project()
-        project._from_etree(etree)
-        return project
-
-    def get(self, project_id):
-        """
-        Get a single project by id, 
-        FIXME IMPLEMENT throws ProjectNotFound if no project is match given id
-        """
-        # FIXME catch 404 here
-        etree = self.client.get('/projects/%s' % project_id)
-        project = Project()
-        project._from_etree(etree)
-        return project
-
-    def all(self):
-        """
-        Return list of all projects
-        """
-        etree = self.client.get('/projects')
-        # FIXME
-        result = list()
-        for tree in etree.findall('project'):
-            project = Project()
-            project._from_etree(tree)
-            result.append(project)
-        return result
-        
-
+        super(ProjectManager, self).__init__(client, Project, '/projects')
 
 @diff_id_field(IntField, ['id'])
 class Project(Document):
@@ -112,6 +78,7 @@ class Project(Document):
     commit_mode = BooleanField()
     last_activity_at = PyDateTimeField()
 
+    _tagname = 'project'
 
     """
     Private methods
