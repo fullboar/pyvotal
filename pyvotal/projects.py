@@ -14,14 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from xml.etree.ElementTree import Element, SubElement, dump, tostring
-
-from dictshield.document import Document, diff_id_field
 from dictshield.fields import IntField, StringField, BooleanField
 
-from pyvotal.utils import _node_text
 from pyvotal.manager import ResourceManager
 from pyvotal.fields import PyDateTimeField
+from pyvotal.document import PyvotalDocument
 
 class ProjectManager(ResourceManager):
     """
@@ -32,8 +29,7 @@ class ProjectManager(ResourceManager):
         self.client = client
         super(ProjectManager, self).__init__(client, Project, '/projects')
 
-@diff_id_field(IntField, ['id'])
-class Project(Document):
+class Project(PyvotalDocument):
     """
     Parsed response from api with project info
     """
@@ -58,37 +54,3 @@ class Project(Document):
     last_activity_at = PyDateTimeField()
 
     _tagname = 'project'
-
-    """
-    Private methods
-    """
-    def _from_etree(self, etree):
-        for name, field in self._fields.items():
-            try:
-                setattr(self, name, field.for_python(_node_text(etree, name)))
-            except:
-                # no value for field
-                # FIXME handle it somehow
-                pass
-
-    def _to_xml(self):
-        root = Element('project')
-        for name, field in sorted(self._fields.items()):
-            value = text=getattr(self, name)
-            if value is None:
-                # skip not filled fields
-                continue
-
-            attribs = dict()
-            if isinstance(field, IntField) and name is not 'id':
-                attribs['type']='integer'
-            if isinstance(field, PyDateTimeField):
-                attribs['type']='datetime'
-                value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
-
-            el = SubElement(root, name)
-            el.text = str(value)
-            el.attrib = attribs
-        return tostring(root)
-        #dump(root)
-
