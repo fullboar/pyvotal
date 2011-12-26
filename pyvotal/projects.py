@@ -16,33 +16,12 @@
 
 from xml.etree.ElementTree import Element, SubElement, dump, tostring
 
-from dateutil import parser
-
 from dictshield.document import Document, diff_id_field
-from dictshield.fields import IntField, StringField, BooleanField, DateTimeField
+from dictshield.fields import IntField, StringField, BooleanField
 
-from pyvotal.tz import tzd
 from pyvotal.utils import _node_text
 from pyvotal.manager import ResourceManager
-
-class PyDateTimeField(DateTimeField):
-    """
-    DictShield DateTimeField wrapper which knows
-    how to deal with pivotal tracker date strings
-    """
-    def __set__(self, instance, value):
-        """If `value` is a string it is converted to datetime via python-dateutil.
-        
-        A datetime may be used (and is encouraged).
-        """
-        if not value:
-            return
-
-        if isinstance(value, (str, unicode)):
-            value = parser.parse(value, tzinfos=tzd)
-
-        instance._data[self.field_name] = value
-
+from pyvotal.fields import PyDateTimeField
 
 class ProjectManager(ResourceManager):
     """
@@ -103,7 +82,7 @@ class Project(Document):
             attribs = dict()
             if isinstance(field, IntField) and name is not 'id':
                 attribs['type']='integer'
-            if isinstance(field, DateTimeField):
+            if isinstance(field, PyDateTimeField):
                 attribs['type']='datetime'
                 value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
 
