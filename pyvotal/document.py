@@ -30,6 +30,12 @@ class XMLMixin(object):
     """
     def _from_etree(self, etree):
         for name, field in self._fields.items():
+            if isinstance(field, EmbeddedDocumentField):
+                obj = field.document_type_obj()
+                obj._from_etree(etree.find(name))
+                setattr(self, name, obj)
+                continue
+
             try:
                 setattr(self, name, field.for_python(_node_text(etree, name)))
             except:
@@ -70,9 +76,6 @@ class PyvotalDocument(Document, XMLMixin):
     """
     Base class for pivotal objects representation
     """
-
-
-        #dump(root)
 
 class PyvotalEmbeddedDocument(EmbeddedDocument, XMLMixin):
     pass

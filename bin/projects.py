@@ -19,11 +19,11 @@ import sys
 import argparse
 from getpass import getpass
 
-from pyvotal import PTracker, Project
+from pyvotal import PTracker
 
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')
-parser.add_argument('command', help='command', choices=('list','add'))
+parser.add_argument('command', help='command', choices=('list','add', 'members'))
 parser.add_argument('args', help='args for command', nargs='*')
 
 
@@ -46,4 +46,12 @@ if args.command == 'add':
     new_project.public = True
     project  = p.projects.add(new_project)
     print "Added project\n #%s '%s' @ %s\n" % (project.id, project.name, project.account)
+    sys.exit()
+
+
+if args.command == 'members':
+    project = p.Project()
+    project.id = args.args[0]
+    for m in project.memberships.all():
+        print "%s %s<%s>" % (m.role, m.person.name, m.person.email)
     sys.exit()

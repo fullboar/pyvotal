@@ -60,7 +60,7 @@ class Project(PyvotalDocument):
     def memberships(self):
         if self.id is None:
             raise PyvotalException("Project does not have id")
-        if self.membership is None:
+        if not getattr(self, 'membership', None):
             self.membership = MembershipManager(self.client, self.id)
 
         return self.membership

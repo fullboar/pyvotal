@@ -53,7 +53,6 @@ class Client(object):
     def get(self, resource, **kwargs):
         kwargs = self._inject_token(kwargs)
         resp = requests.get(self._endpoint_for(resource), **kwargs)
-
         return self._process_resp(resp)
 
     def post(self, resource, data, **kwargs):
