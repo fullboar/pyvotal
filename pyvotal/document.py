@@ -17,19 +17,14 @@
 
 from xml.etree.ElementTree import Element, SubElement, dump, tostring
 
-from dictshield.document import Document, diff_id_field
+from dictshield.document import Document, EmbeddedDocument, diff_id_field
 from dictshield.fields import IntField, StringField, BooleanField
+from dictshield.fields.compound import EmbeddedDocumentField
 
 from pyvotal.utils import _node_text
 from pyvotal.fields import PyDateTimeField
 
-@diff_id_field(IntField, ['id'])
-class PyvotalDocument(Document):
-    """
-    Base class for pivotal objects representation
-    """
-
-
+class XMLMixin(object):
     """
     Private methods
     """
@@ -42,8 +37,12 @@ class PyvotalDocument(Document):
                 # FIXME handle it somehow
                 pass
 
-    def _to_xml(self):
-        root = Element(self._tagname)
+    def _to_xml(self, parent=None):
+        if parent is not None:
+            root = SubElement(parent, self._tagname)
+        else:
+            root = Element(self._tagname)
+
         for name, field in sorted(self._fields.items()):
             value = text=getattr(self, name)
             if value is None:
@@ -57,8 +56,23 @@ class PyvotalDocument(Document):
                 attribs['type']='datetime'
                 value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
 
-            el = SubElement(root, name)
-            el.text = str(value)
-            el.attrib = attribs
+            if isinstance(field, EmbeddedDocumentField):
+                value._to_xml(root)
+            else:
+                el = SubElement(root, name)
+                el.text = str(value)
+                el.attrib = attribs
         return tostring(root)
+
+
+@diff_id_field(IntField, ['id'])
+class PyvotalDocument(Document, XMLMixin):
+    """
+    Base class for pivotal objects representation
+    """
+
+
         #dump(root)
+
+class PyvotalEmbeddedDocument(EmbeddedDocument, XMLMixin):
+    pass

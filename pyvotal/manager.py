@@ -54,3 +54,8 @@ class ResourceManager(object):
             result.append(obj)
         return result
 
+    def delete(self):
+        etree = self.client.delete('%s/%s' % (self.base_resource, obj_id))
+        obj = self.cls()
+        obj._from_etree(etree)
+        return obj

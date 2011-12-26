@@ -17,6 +17,7 @@
 from dictshield.fields import IntField, StringField, BooleanField
 
 from pyvotal.manager import ResourceManager
+from pyvotal.membership import MembershipManager
 from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument
 
@@ -54,3 +55,12 @@ class Project(PyvotalDocument):
     last_activity_at = PyDateTimeField()
 
     _tagname = 'project'
+
+    @property
+    def memberships(self):
+        if self.id is None:
+            raise PyvotalException("Project does not have id")
+        if self.membership is None:
+            self.membership = MembershipManager(self.client, self.id)
+
+        return self.membership

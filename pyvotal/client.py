@@ -64,6 +64,11 @@ class Client(object):
 
         return self._process_resp(resp)
 
+    def delete(self, resource, **kwargs):
+        kwargs = self._inject_token(kwargs)
+        resp = requests.delete(self._endpoint_for(resource), **kwargs)
+
+        return self._process_resp(resp)
         
     """
     Private methods
