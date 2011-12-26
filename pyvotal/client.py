@@ -17,7 +17,7 @@
 import requests
 from xml.etree.ElementTree import XML
 
-from exceptions import AccessDenied
+from exceptions import AccessDenied, PyvotalException
 
 class Client(object):
     """
@@ -54,9 +54,16 @@ class Client(object):
         kwargs = self._inject_token(kwargs)
         resp = requests.get(self._endpoint_for(resource), **kwargs)
 
-        if resp.status_code == 401:
-            raise AccessDenied()
-        return XML(resp.content)
+        return self._process_resp(resp)
+
+    def post(self, resource, data, **kwargs):
+        kwargs = self._inject_token(kwargs)
+        kwargs['headers']['Content-type'] = 'application/xml'
+
+        resp = requests.post(self._endpoint_for(resource), data=data, **kwargs)
+
+        return self._process_resp(resp)
+
         
     """
     Private methods
@@ -75,4 +82,16 @@ class Client(object):
                 kwargs_dict['headers'] = {'X-TrackerToken':self.token}
 
         return kwargs_dict
+
+    def _process_resp(self, resp):
+        """ Check response for errors """
+        if resp.status_code == 401:
+            raise AccessDenied()
+        if resp.status_code != 200:
+            raise PyvotalException("Call to api ended with %s code" % resp.status_code)
+        etree = XML(resp.content)
+        if etree.tag == 'message':
+            # pivotal api call failed
+            raise PyvotalException(etree.text)
+        return etree
 

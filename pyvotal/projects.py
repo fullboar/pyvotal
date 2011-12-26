@@ -52,6 +52,15 @@ class ProjectManager(object):
     def __init__(self, client):
         self.client = client
 
+    def add(self, project):
+        """
+        Adds given project to pivotal tracker
+        """
+        etree = self.client.post('/projects', project._to_xml())
+        project = Project()
+        project._from_etree(etree)
+        return project
+
     def get(self, project_id):
         """
         Get a single project by id, 
@@ -88,6 +97,9 @@ class Project(Document):
     week_start_day = StringField()
     point_scale = StringField()
     account = StringField()
+    first_iteration_start_time = PyDateTimeField()
+    current_iteration_number = IntField()
+    enable_tasks = BooleanField()
     velocity_scheme = StringField()
     current_velocity = IntField()
     initial_velocity = IntField()
@@ -106,7 +118,12 @@ class Project(Document):
     """
     def _from_etree(self, etree):
         for name, field in self._fields.items():
-            setattr(self, name, field.for_python(_node_text(etree, name)))
+            try:
+                setattr(self, name, field.for_python(_node_text(etree, name)))
+            except:
+                # no value for field
+                # FIXME handle it somehow
+                pass
 
     def _to_xml(self):
         root = Element('project')

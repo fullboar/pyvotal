@@ -14,13 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 import argparse
 from getpass import getpass
 
-from pyvotal import PTracker
+from pyvotal import PTracker, Project
 
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')
+parser.add_argument('command', help='command', choices=('list','add'))
+parser.add_argument('args', help='args for command', nargs='*')
+
 
 args = parser.parse_args()
 
@@ -28,5 +33,17 @@ password = getpass()
 
 p = PTracker(user=args.user, password=password)
 
-for project in p.projects.all():
-    print "#%s '%s' @ %s\n" % (project.id, project.name, project.account)
+if args.command == 'list':
+    for project in p.projects.all():
+        print "#%s '%s' @ %s\n" % (project.id, project.name, project.account)
+    sys.exit()
+
+if args.command == 'add':
+    new_project = Project()
+    new_project.name = args.args[0]
+    new_project.iteration_length = 2
+    new_project.point_scale = '0,1,3,9,27'
+    new_project.public = True
+    project  = p.projects.add(new_project)
+    print "Added project\n #%s '%s' @ %s\n" % (project.id, project.name, project.account)
+    sys.exit()

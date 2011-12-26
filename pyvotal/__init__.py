@@ -15,5 +15,6 @@
 # limitations under the License.
 
 from ptracker import PTracker
+from projects import Project
 
-__all__ = ['PTracker',]
+__all__ = [PTracker, Project]
