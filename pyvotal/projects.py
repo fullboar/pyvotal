@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from xml.etree.ElementTree import SubElement
+
 from dictshield.fields import IntField, StringField, BooleanField
 
 from pyvotal.manager import ResourceManager
@@ -64,3 +66,13 @@ class Project(PyvotalDocument):
             self.membership = MembershipManager(self.client, self.id)
 
         return self.membership
+
+    def _contribute_to_xml(self, etree):
+        if getattr(self, "no_owner", False):
+            el = SubElement(etree, "no_owner")
+            el.text = str(True).lower()
+            el.attrib = {'type':'boolean'}
+
+
+        pass
+        

@@ -47,6 +47,17 @@ target_xml = """<project>\
 <week_start_day>Monday</week_start_day>\
 </project>"""
 
+target_no_owner_xml = """<project>\
+<id>31337</id>\
+<iteration_length type="integer">2</iteration_length>\
+<labels>label1, label2</labels>\
+<last_activity_at type="datetime">2010/01/16 17:39:10 CST</last_activity_at>\
+<name>Sample Project</name>\
+<point_scale>0,1,2,3</point_scale>\
+<week_start_day>Monday</week_start_day>\
+<no_owner type=\"boolean\">true</no_owner>\
+</project>"""
+
 
 class TestProject:
     def test_can_be_converted_to_xml(self):
@@ -57,7 +68,13 @@ class TestProject:
         assert p._to_xml() == target_xml 
 
     def test_can_be_converted_to_xml_with_no_owner(self):
-        pass
+        p = Project()
+
+        for key, value in project_dict.items():
+            setattr(p, key, value)
+        p.no_owner = True
+
+        assert p._to_xml() == target_no_owner_xml 
 
     def test_can_be_converted_to_xml_with_nested_entities(self):
         #assert False

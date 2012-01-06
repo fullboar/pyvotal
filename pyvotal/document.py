@@ -50,7 +50,7 @@ class XMLMixin(object):
             root = Element(self._tagname)
 
         for name, field in sorted(self._fields.items()):
-            value = text=getattr(self, name)
+            value = getattr(self, name)
             if value is None:
                 # skip not filled fields
                 continue
@@ -68,7 +68,12 @@ class XMLMixin(object):
                 el = SubElement(root, name)
                 el.text = str(value)
                 el.attrib = attribs
+        # allow sub classes to add custom ad-hoc fields
+        self._contribute_to_xml(root)
         return tostring(root)
+
+    def _contribute_to_xml(self, etree):
+        pass
 
 
 @diff_id_field(IntField, ['id'])

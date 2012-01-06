@@ -34,7 +34,7 @@ class TestClient:
     def setup(self):
         self.c = Client(ssl=False)
         self.ssl_c = Client(ssl=True)
-    
+
     def test_ssl_property_set_correct_api_location(self):
         assert self.ssl_c.api_location == 'https://www.pivotaltracker.com/services/v3/'
         assert self.c.api_location == 'http://www.pivotaltracker.com/services/v3/'
