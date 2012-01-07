@@ -68,7 +68,7 @@ class Client(object):
         resp = requests.delete(self._endpoint_for(resource), **kwargs)
 
         return self._process_resp(resp)
-        
+
     """
     Private methods
     """
@@ -92,7 +92,7 @@ class Client(object):
         if resp.status_code == 401:
             raise AccessDenied()
         if resp.status_code != 200:
-            raise PyvotalException("Call to api ended with %s code" % resp.status_code)
+            raise PyvotalException("Call to api ended with %s code.\nResponse body:\n %s" % (resp.status_code, resp.content))
         etree = XML(resp.content)
         if etree.tag == 'message':
             # pivotal api call failed

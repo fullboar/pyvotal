@@ -72,7 +72,5 @@ class Project(PyvotalDocument):
             el = SubElement(etree, "no_owner")
             el.text = str(True).lower()
             el.attrib = {'type':'boolean'}
-
-
         pass
         

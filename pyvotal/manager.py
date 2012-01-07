@@ -20,25 +20,23 @@ class ResourceManager(object):
         self.client = client
         self.cls = cls
         self.base_resource = base_resource
-    
+
     def add(self, obj):
         """
         Adds given object to pivotal tracker
         """
         etree = self.client.post(self.base_resource, obj._to_xml())
-        obj = self.cls()
-        obj._from_etree(etree)
+        obj = self._obj_from_etree(etree)
         return obj
 
     def get(self, obj_id):
         """
-        Get a single object by id, 
+        Get a single object by id,
         FIXME IMPLEMENT throws object.NotFound if no object is match given id
         """
         # FIXME catch 404 here
         etree = self.client.get('%s/%s' % (self.base_resource, obj_id))
-        obj = self.cls()
-        obj._from_etree(etree)
+        obj = self._obj_from_etree(etree)
         return obj
 
     def all(self):
@@ -49,13 +47,17 @@ class ResourceManager(object):
         # FIXME
         result = list()
         for tree in etree.findall(self.cls._tagname):
-            obj = self.cls()
-            obj._from_etree(tree)
+            obj = self._obj_from_etree(tree)
             result.append(obj)
         return result
 
-    def delete(self):
+    def delete(self, obj_id):
         etree = self.client.delete('%s/%s' % (self.base_resource, obj_id))
+        obj = self._obj_from_etree(etree)
+        return obj
+
+    def _obj_from_etree(self, etree):
         obj = self.cls()
         obj._from_etree(etree)
+        obj.client = self.client
         return obj

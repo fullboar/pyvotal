@@ -50,3 +50,7 @@ class Membership(PyvotalDocument):
     person = EmbeddedDocumentField(Person)
 
     _tagname = 'membership'
+
+    @property
+    def is_owner(self):
+        return self.role == 'Owner'

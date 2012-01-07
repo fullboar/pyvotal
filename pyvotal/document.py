@@ -35,7 +35,6 @@ class XMLMixin(object):
                 obj._from_etree(etree.find(name))
                 setattr(self, name, obj)
                 continue
-
             try:
                 setattr(self, name, field.for_python(_node_text(etree, name)))
             except:
@@ -61,6 +60,9 @@ class XMLMixin(object):
             if isinstance(field, PyDateTimeField):
                 attribs['type']='datetime'
                 value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
+            if isinstance(field, BooleanField) and name is not 'id':
+                attribs['type']='boolean'
+                value = str(value).lower()
 
             if isinstance(field, EmbeddedDocumentField):
                 value._to_xml(root)

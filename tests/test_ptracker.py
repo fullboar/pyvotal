@@ -190,3 +190,4 @@ class TestProjectManager:
         projects = self.p.projects.all()
 
         assert len(projects) == 2
+        assert projects[0].name == 'Sample Project'
