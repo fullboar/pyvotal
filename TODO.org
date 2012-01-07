@@ -1,10 +1,13 @@
 #+STARTUP: content
 * Todo
-** TODO Testing [2/3]
+** DONE Testing [2/2]
  + [X] Check if pivotal can parse capitalazed boolean values. CANT!
  + [X] Check if pivotal can parse boolean fields w/o type attribute. CAN
+** TODO Must have till 1.0 [0/1]
+ + [ ] Make use of inline stories/memberships in request
  + [ ] Try to parse error response from api
-
-
+** TODO Nice to have [0/2]
+ + [ ] logging
+ + [ ] exception on delete undeletable resources
 ** Known errors
  + Duplicate project name

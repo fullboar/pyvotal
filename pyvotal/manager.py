@@ -39,11 +39,19 @@ class ResourceManager(object):
         obj = self._obj_from_etree(etree)
         return obj
 
-    def all(self):
+    def all(self, limit=None, offset=None, filter=None):
         """
         Return list of all objects
         """
-        etree = self.client.get(self.base_resource)
+        params = dict()
+        if limit is not None:
+            params['limit'] = int(limit)
+        if offset is not None:
+            params['offset'] = int(offset)
+        url = self.base_resource
+        if filter:
+            url = "%s/%s" % (url, filter)
+        etree = self.client.get(url, params=params)
         # FIXME
         result = list()
         for tree in etree.findall(self.cls._tagname):

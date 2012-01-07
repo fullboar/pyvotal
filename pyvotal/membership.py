@@ -25,7 +25,7 @@ from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
 class MembershipManager(ResourceManager):
     """
-    Class for membersip retrieval. Availeable as Project.membership
+    Class for memberships retrieval. Availeable as Project.memberships
     """
 
     def __init__(self, client, project_id):

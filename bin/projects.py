@@ -23,7 +23,7 @@ from pyvotal import PTracker
 
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')
-parser.add_argument('command', help='command', choices=('list','add', 'members'))
+parser.add_argument('command', help='command', choices=('list','add', 'members', 'iterations'))
 parser.add_argument('args', help='args for command', nargs='*')
 
 
@@ -55,3 +55,23 @@ if args.command == 'members':
     for m in project.memberships.all():
         print "%s %s<%s>" % (m.role, m.person.name, m.person.email)
     sys.exit()
+
+if args.command == 'iterations':
+    project = p.Project()
+    project.id = args.args[0]
+
+    kwargs = dict()
+    if len(args.args) == 2:
+        kwargs['filter'] = args.args[1]
+    if len(args.args) == 3:
+        kwargs['offset'] = args.args[1]
+        kwargs['limit'] = args.args[2]
+    if len(args.args) == 4:
+        kwargs['filter'] = args.args[1]
+        kwargs['offset'] = args.args[2]
+        kwargs['limit'] = args.args[3]
+
+    for i in project.iterations.all(**kwargs):
+        print "%s %s<%s>" % (i.number, i.start, i.finish)
+    sys.exit()
+    

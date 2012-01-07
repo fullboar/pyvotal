@@ -20,6 +20,7 @@ from dictshield.fields import IntField, StringField, BooleanField
 
 from pyvotal.manager import ResourceManager
 from pyvotal.membership import MembershipManager
+from pyvotal.iterations import IterationManager
 from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument
 
@@ -62,10 +63,20 @@ class Project(PyvotalDocument):
     def memberships(self):
         if self.id is None:
             raise PyvotalException("Project does not have id")
-        if not getattr(self, 'membership', None):
-            self.membership = MembershipManager(self.client, self.id)
+        if not getattr(self, '_memberships', None):
+            self._memberships = MembershipManager(self.client, self.id)
 
-        return self.membership
+        return self._memberships
+
+    @property
+    def iterations(self):
+        if self.id is None:
+            raise PyvotalException("Project does not have id")
+        if not getattr(self, '_iterations', None):
+            self._iterations = IterationManager(self.client, self.id)
+
+        return self._iterations
+
 
     def _contribute_to_xml(self, etree):
         if getattr(self, "no_owner", False):
