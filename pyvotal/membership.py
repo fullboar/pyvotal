@@ -54,3 +54,11 @@ class Membership(PyvotalDocument):
     @property
     def is_owner(self):
         return self.role == 'Owner'
+
+    @property
+    def is_member(self):
+        return self.role == 'Member'
+
+    @property
+    def is_viewer(self):
+        return self.role == 'Viewer'
