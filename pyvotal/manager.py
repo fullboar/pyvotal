@@ -39,7 +39,7 @@ class ResourceManager(object):
         obj = self._obj_from_etree(etree)
         return obj
 
-    def all(self, limit=None, offset=None, filter=None):
+    def all(self, limit=None, offset=None, **kwargs):
         """
         Return list of all objects
         """
@@ -49,8 +49,7 @@ class ResourceManager(object):
         if offset is not None:
             params['offset'] = int(offset)
         url = self.base_resource
-        if filter:
-            url = "%s/%s" % (url, filter)
+        (url, params) = self._contribute_to_all_request(url, params, **kwargs)
         etree = self.client.get(url, params=params)
         # FIXME
         result = list()
@@ -69,3 +68,6 @@ class ResourceManager(object):
         obj._from_etree(etree)
         obj.client = self.client
         return obj
+
+    def _contribute_to_all_request(self, url, params, **kwargs):
+        return (url, params)

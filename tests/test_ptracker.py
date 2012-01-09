@@ -167,7 +167,7 @@ class TestPtracker:
     def test_retrives_token_for_credentials_if_no_token_given(self):
         p = PTracker(user='user', password='pass')
         assert p.token == 'c93f12c71bec27843c1d84b3bdd547f3'
-        
+
 
 
 class TestProjectManager:

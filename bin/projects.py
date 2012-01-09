@@ -21,9 +21,63 @@ from getpass import getpass
 
 from pyvotal import PTracker
 
+
+
+def list_command(*args):
+    for project in p.projects.all():
+        print "#%s '%s' @ %s\n" % (project.id, project.name, project.account)
+
+def add_command(*args):
+    new_project = Project()
+    new_project.name = args.args[0]
+    new_project.iteration_length = 2
+    new_project.point_scale = '0,1,3,9,27'
+    new_project.public = True
+    project  = p.projects.add(new_project)
+    print "Added project\n #%s '%s' @ %s\n" % (project.id, project.name, project.account)
+
+def list_members_command(pid):
+    project = p.Project()
+    project.id = pid
+    for m in project.memberships.all():
+        print "%s %s<%s>" % (m.role, m.person.name, m.person.email)
+
+def list_iterations_command(pid, *args):
+    project = p.Project()
+    project.id = pid
+
+    kwargs = dict()
+    if len(args) == 1:
+        kwargs['filter'] = args[0]
+    if len(args) == 3:
+        kwargs['offset'] = args[0]
+        kwargs['limit'] = args[1]
+    if len(args) == 4:
+        kwargs['filter'] = args[0]
+        kwargs['offset'] = args[1]
+        kwargs['limit'] = args[2]
+
+    for i in project.iterations.all(**kwargs):
+        print "%s %s to %s" % (i.number, i.start, i.finish)
+
+def list_stories_command(pid, *args):
+    project = p.Project()
+    project.id = pid
+    for s in project.stories.all():
+        print "%s %s %s" % (s.id, s.name, s.url)
+
+
+COMMANDS = dict()
+COMMANDS['list'] = list_command
+COMMANDS['add'] = add_command
+COMMANDS['members'] = list_members_command
+COMMANDS['iterations'] = list_iterations_command
+COMMANDS['stories'] = list_stories_command
+
+
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')
-parser.add_argument('command', help='command', choices=('list','add', 'members', 'iterations'))
+parser.add_argument('command', help='command', choices=COMMANDS.keys())
 parser.add_argument('args', help='args for command', nargs='*')
 
 
@@ -33,45 +87,7 @@ password = getpass()
 
 p = PTracker(user=args.user, password=password)
 
-if args.command == 'list':
-    for project in p.projects.all():
-        print "#%s '%s' @ %s\n" % (project.id, project.name, project.account)
-    sys.exit()
 
-if args.command == 'add':
-    new_project = Project()
-    new_project.name = args.args[0]
-    new_project.iteration_length = 2
-    new_project.point_scale = '0,1,3,9,27'
-    new_project.public = True
-    project  = p.projects.add(new_project)
-    print "Added project\n #%s '%s' @ %s\n" % (project.id, project.name, project.account)
-    sys.exit()
+command = COMMANDS.get(args.command)
 
-
-if args.command == 'members':
-    project = p.Project()
-    project.id = args.args[0]
-    for m in project.memberships.all():
-        print "%s %s<%s>" % (m.role, m.person.name, m.person.email)
-    sys.exit()
-
-if args.command == 'iterations':
-    project = p.Project()
-    project.id = args.args[0]
-
-    kwargs = dict()
-    if len(args.args) == 2:
-        kwargs['filter'] = args.args[1]
-    if len(args.args) == 3:
-        kwargs['offset'] = args.args[1]
-        kwargs['limit'] = args.args[2]
-    if len(args.args) == 4:
-        kwargs['filter'] = args.args[1]
-        kwargs['offset'] = args.args[2]
-        kwargs['limit'] = args.args[3]
-
-    for i in project.iterations.all(**kwargs):
-        print "%s %s<%s>" % (i.number, i.start, i.finish)
-    sys.exit()
-    
+command(*args.args)

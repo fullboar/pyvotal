@@ -44,7 +44,7 @@ class Person(PyvotalEmbeddedDocument):
 
 class Membership(PyvotalDocument):
     """
-    Parsed response from api with project info
+    Parsed response from api with membership info
     """
     role = StringField()
     person = EmbeddedDocumentField(Person)

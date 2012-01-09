@@ -21,6 +21,7 @@ from dictshield.fields import IntField, StringField, BooleanField
 from pyvotal.manager import ResourceManager
 from pyvotal.membership import MembershipManager
 from pyvotal.iterations import IterationManager
+from pyvotal.stories import StoryManager
 from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument
 
@@ -32,6 +33,12 @@ class ProjectManager(ResourceManager):
     def __init__(self, client):
         self.client = client
         super(ProjectManager, self).__init__(client, Project, '/projects')
+
+    def _contibute_to_all_request(self, url, params, filter=None):
+        if filter:
+            url = "%s/%s" % (url, filter)
+        return (url, params)
+
 
 class Project(PyvotalDocument):
     """
@@ -77,6 +84,14 @@ class Project(PyvotalDocument):
 
         return self._iterations
 
+    @property
+    def stories(self):
+        if self.id is None:
+            raise PyvotalException("Project does not have id")
+        if not getattr(self, '_stories', None):
+            self._stories = StoryManager(self.client, self.id)
+
+        return self._stories
 
     def _contribute_to_xml(self, etree):
         if getattr(self, "no_owner", False):

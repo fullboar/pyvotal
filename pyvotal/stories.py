@@ -22,24 +22,38 @@ from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
 
-class IterationManager(ResourceManager):
+class StoryManager(ResourceManager):
     """
-    Class for iteration retrieval. Availeable as Project.iterations
+    Class for iteration retrieval. Availeable as Project.stories
     """
 
     def __init__(self, client, project_id):
         self.client = client
-        super(IterationManager, self).__init__(client, Iteration, 'projects/%s/iterations' % project_id)
+        super(StoryManager, self).__init__(client, Story, 'projects/%s/stories' % project_id)
+
+    def _contribute_to_all_request(self, url, params, **kwargs):
+        if len(kwargs.keys()):
+            params['filter'] = ' '.join(['%s:%s' % (x, '"%s"' % kwargs[x] if ' ' in kwargs[x] else kwargs[x]) for x in kwargs.keys() ])
+        return (url, params)
 
 
-class Iteration(PyvotalDocument):
+class Story(PyvotalDocument):
     """
-    Parsed response from api with iteration info
+    Parsed response from api with story info
     """
-    number = IntField()
-    start = PyDateTimeField()
-    finish = PyDateTimeField()
-    team_strength = FloatField()
+    project_id = IntField()
+    story_type = StringField()
+    url = StringField()
+    estimate = IntField()
+    current_state = StringField()
+    description = StringField()
+    name = StringField()
+    requested_by = StringField()
+    owned_by = StringField()
+    created_at = PyDateTimeField()
+    accepted_at = PyDateTimeField()
+    labels = StringField()
+    # TODO:  attachments
 
-    _tagname = 'iteration'
+    _tagname = 'story'
 
