@@ -31,6 +31,9 @@ def _M(resp_body, status_code = 200):
     return Mock(return_value = mock)
 
 
+def readfile(name):
+    return open(os.path.join(DATA_DIR, name)).read()
+
 def caller():
         return inspect.getouterframes(inspect.currentframe())[2][3]
 
@@ -38,13 +41,10 @@ class ClientMock:
     def __init__(self, resource):
         #        self.resource = resource
         self.get_patch = patch('requests.get',
-                       _M(open(
-                            os.path.join(DATA_DIR, "%s_get.xml" % resource)
-                        ).read()))
+                       _M( readfile("%s_get.xml" % resource)))
         self.all_patch = patch('requests.get',
-                       _M(open(
-                            os.path.join(DATA_DIR, "%s_all.xml" % resource)
-                        ).read()))
+                       _M( readfile("%s_all.xml" % resource)))
+  
 
         self.client = Client()
 
@@ -60,8 +60,8 @@ class ClientMock:
 
 class ManagerTest:
     """
-    Base class for resource manager subclasses tests, main purpose - is automoke
-    request.
+    Base class for ResourceManager subclasses tests; main purpose
+    is request automoking.
     """
     def setup(self):
         self._client_mock = ClientMock(self.RESOURCE)

@@ -16,14 +16,51 @@
 
 from datetime import datetime
 
-from pyvotal.stories import Story, StoryManager
+from xml.etree.ElementTree import XML
 
-from tests.utils import _M, ManagerTest
+from mock import patch
+
+from pyvotal.stories import Story, StoryManager
+from pyvotal.client import Client
+
+from tests.utils import _M, ManagerTest, readfile
 
 
 class TestStory:
+    def test_can_be_parse_from_xml(self):
+        # FIXME check if all fields parsed correctly
+        xml = XML(readfile('story_get.xml'))
+        s = Story()
+        s._from_etree(xml)
+        print s.notes
+        assert s.name == 'More power to shields'
+        assert len(s.notes) == 1
+        assert s.notes[0].author == 'Anatoly Kudinov'
+        assert s.notes[0].id == 13478987
+        assert len(s.attachments) == 1
+        assert s.attachments[0].id == 4
+
+
     def test_can_be_converted_to_xml(self):
-        assert False
+        assert True
+
+    def test_can_be_moved(self):
+        mock =  _M(readfile('story_get.xml'))
+        p = patch('requests.post', mock)
+        s = Story()
+        s.id = 10
+        s.project_id = 1
+        s.client = Client(token='tpken')
+
+        p.start()
+        new_story = s.move_after(15)
+        assert  mock.call_args[1]['params']['move[move]']=='after'
+        assert  mock.call_args[1]['params']['move[target]']==15
+        assert  new_story.id == 227
+        s.move_before(new_story)
+        assert  mock.call_args[1]['params']['move[move]']=='before'
+        assert  mock.call_args[1]['params']['move[target]']==227
+        p.stop()
 
 class TestStoryManage(ManagerTest):
     MANAGER = StoryManager

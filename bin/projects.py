@@ -66,6 +66,62 @@ def list_stories_command(pid, *args):
     for s in project.stories.all():
         print "%s %s %s" % (s.id, s.name, s.url)
 
+def get_story_command(pid, story_id):
+    project = p.Project()
+    project.id = pid
+    s = project.stories.get(story_id)
+    print "%s %s" % (s.name, s.url)
+
+def add_story_command(pid, name):
+    project = p.Project()
+    project.id = pid
+    story = p.Story()
+    story.name = name
+    s = project.stories.add(story)
+    print "Added story id %s" % (s.id)
+
+def update_story_command(pid, story_id):
+    project = p.Project()
+    project.id = pid
+    s = project.stories.get(story_id)
+    s.description = "Stub description"
+    s.save()
+    #    print "%s %s" % (s.name, s.url)
+
+def delete_story_command(pid, story_id):
+    project = p.Project()
+    project.id = pid
+    s = project.stories.delete(story_id)
+    print "Story %s deleted" % s.id
+
+def add_note_command(pid, story_id, text):
+    s = p.Story()
+    s.project_id = pid
+    s.id = story_id
+    n = s.add_note(text)
+    print "Note %s added" % n.id
+
+def add_attachment_command(pid, story_id, path):
+    project = p.Project()
+    project.id = pid
+    s = project.stories.get(story_id)
+    s.add_attachment('Test attachment', open(path,'rb'))
+
+
+def deliver_all_command(pid):
+    project = p.Project()
+    project.id = pid
+    ss = project.stories.deliver_all_finished()
+    for s in ss:
+        print "[%s]%s delivered" % (s.id, s.name)
+
+def move_story_command(pid, story_id, move, target):
+    s = p.Story()
+    s.project_id = pid
+    s.id = story_id
+    s.move(move, target)
+    print "Story moved"
+
 
 COMMANDS = dict()
 COMMANDS['list'] = list_command
@@ -73,7 +129,14 @@ COMMANDS['add'] = add_command
 COMMANDS['members'] = list_members_command
 COMMANDS['iterations'] = list_iterations_command
 COMMANDS['stories'] = list_stories_command
-
+COMMANDS['deliver_all'] = deliver_all_command
+COMMANDS['get_story'] = get_story_command
+COMMANDS['add_story'] = add_story_command
+COMMANDS['update_story'] = update_story_command
+COMMANDS['delete_story'] = delete_story_command
+COMMANDS['add_note'] = add_note_command
+COMMANDS['add_attachment'] = add_attachment_command
+COMMANDS['move'] = move_story_command
 
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')

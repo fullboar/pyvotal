@@ -16,6 +16,7 @@
 
 from dictshield.fields import IntField, StringField, BooleanField, EmailField,\
       FloatField
+from dictshield.fields.compound import ListField, EmbeddedDocumentField
 
 from pyvotal.manager import ResourceManager
 from pyvotal.fields import PyDateTimeField
@@ -36,6 +37,32 @@ class StoryManager(ResourceManager):
             params['filter'] = ' '.join(['%s:%s' % (x, '"%s"' % kwargs[x] if ' ' in kwargs[x] else kwargs[x]) for x in kwargs.keys() ])
         return (url, params)
 
+    def deliver_all_finished(self):
+        etree = self.client.put("%s/deliver_all_finished" % self.base_resource, "", xml=False)
+        result = list()
+        for tree in etree.findall(self.cls._tagname):
+            obj = self._obj_from_etree(tree)
+            result.append(obj)
+        return result
+
+
+class Note(PyvotalEmbeddedDocument):
+    id = IntField()
+    text = StringField()
+    author = StringField()
+    noted_ad = PyDateTimeField()
+    _tagname = 'note'
+
+
+class Attachment(PyvotalEmbeddedDocument):
+    id = IntField()
+    filename = StringField()
+    description = StringField()
+    uploaded_by = StringField()
+    uploaded_at = PyDateTimeField()
+    utl = StringField()
+    _tagname = 'attachment'
+
 
 class Story(PyvotalDocument):
     """
@@ -53,7 +80,54 @@ class Story(PyvotalDocument):
     created_at = PyDateTimeField()
     accepted_at = PyDateTimeField()
     labels = StringField()
-    # TODO:  attachments
+
+    notes = ListField(EmbeddedDocumentField(Note))
+
+    attachments = ListField(EmbeddedDocumentField(Attachment))
+
+    xml_exclude = ['attachments', 'notes']
+
+    def add_attachment(self, name, fobj):
+        self.client.post('projects/%s/stories/%s/attachments' % (self.project_id, self.id), None, files={'Filedata':(name,fobj)})
+
+    def add_note(self, text):
+        data = "<note><text>%s</text></note>" % text
+        etree = self.client.post('projects/%s/stories/%s/notes/' % (self.project_id, self.id), data)
+        obj = Note()
+        obj._from_etree(etree)
+        return obj
+
+    def save(self):
+        data = self._to_xml(excludes=['id', 'url'])
+        self.client.put('projects/%s/stories/%s' % (self.project_id, self.id), data)
+        # FIXME return new story
+
+
+    def move(self, move, target_id):
+        kwargs = dict()
+        kwargs['move[move]'] = move
+        kwargs['move[target]']= target_id
+        data = self.client.post('projects/%s/stories/%s/moves' % (self.project_id, self.id), "", params=kwargs)
+
+        obj =Story()
+        obj._from_etree(data)
+        obj.client = self.client
+        return obj
+
+    def move_after(self, story):
+        if isinstance(story, Story):
+            story_id = story.id
+        else:
+            story_id = story
+        return self.move('after', story_id)
+
+    def move_before(self, story):
+        if isinstance(story, Story):
+            story_id = story.id
+        else:
+            story_id = story
+        return self.move('before', story_id)
+
 
     _tagname = 'story'
 

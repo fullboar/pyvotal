@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <story>
-<id type="integer">$STORY_ID</id>
-<project_id type="integer">$PROJECT_ID</project_id>
+<id type="integer">227</id>
+<project_id type="integer">1</project_id>
 <story_type>feature</story_type>
 <url>http://www.pivotaltracker.com/story/show/$STORY_ID</url>
 <estimate type="integer">1</estimate>
@@ -25,4 +25,28 @@
 <url>http://www.pivotaltracker.com/resource/download/1295103</url>
 </attachment>
 </attachments>
+<notes type="array">
+<note>
+<id type="integer">13478987</id>
+<text>integration tools support is extracted to another story</text>
+<author>Anatoly Kudinov</author>
+<noted_at type="datetime">2012/01/09 03:23:13 EST</noted_at>
+</note>
+</notes>
+<tasks type="array">
+<task>
+<id type="integer">4836079</id>
+<description>add story</description>
+<position type="integer">1</position>
+<complete type="boolean">false</complete>
+<created_at type="datetime">2011/12/18 13:31:04 EST</created_at>
+</task>
+<task>
+<id type="integer">4836081</id>
+<description>update story</description>
+<position type="integer">2</position>
+<complete type="boolean">false</complete>
+<created_at type="datetime">2011/12/18 13:31:04 EST</created_at>
+</task>
+</tasks>
 </story>

@@ -18,6 +18,7 @@
 from client import Client
 from exceptions import PyvotalException
 from projects import ProjectManager, Project
+from stories import  Story
 
 
 class PTracker(object):
@@ -42,14 +43,22 @@ class PTracker(object):
     def token(self):
         return self.client.token
 
+
+
+    """
+    Public methods
+    """
+
     def Project(self):
         p =  Project()
         p.client = self.client
         return p
 
-    """
-    Public methods
-    """
+    def Story(self):
+        s =  Story()
+        s.client = self.client
+        return s
+
 
     """
     Private methods

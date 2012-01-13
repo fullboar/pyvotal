@@ -19,7 +19,7 @@ from xml.etree.ElementTree import Element, SubElement, dump, tostring
 
 from dictshield.document import Document, EmbeddedDocument, diff_id_field
 from dictshield.fields import IntField, StringField, BooleanField
-from dictshield.fields.compound import EmbeddedDocumentField
+from dictshield.fields.compound import EmbeddedDocumentField, ListField
 
 from pyvotal.utils import _node_text
 from pyvotal.fields import PyDateTimeField
@@ -35,6 +35,16 @@ class XMLMixin(object):
                 obj._from_etree(etree.find(name))
                 setattr(self, name, obj)
                 continue
+            if isinstance(field, ListField):
+                l = []
+                real_field = field.fields[0]
+                for tree in etree.findall("%s/%s" % (name,real_field.document_type_obj._tagname)):
+                    obj = real_field.document_type_obj()
+                    obj._from_etree(tree)
+                    l.append(obj)
+                setattr(self, name, l)
+                continue
+
             try:
                 setattr(self, name, field.for_python(_node_text(etree, name)))
             except:
@@ -42,13 +52,15 @@ class XMLMixin(object):
                 # FIXME handle it somehow
                 pass
 
-    def _to_xml(self, parent=None):
+    def _to_xml(self, parent=None, excludes=[]):
         if parent is not None:
             root = SubElement(parent, self._tagname)
         else:
             root = Element(self._tagname)
 
         for name, field in sorted(self._fields.items()):
+            if name in self.xml_exclude or name in excludes:
+                continue
             value = getattr(self, name)
             if value is None:
                 # skip not filled fields
@@ -77,6 +89,7 @@ class XMLMixin(object):
     def _contribute_to_xml(self, etree):
         pass
 
+    xml_exclude = list()
 
 @diff_id_field(IntField, ['id'])
 class PyvotalDocument(Document, XMLMixin):
