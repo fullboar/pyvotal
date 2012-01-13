@@ -19,7 +19,7 @@ from xml.etree.ElementTree import SubElement
 from dictshield.fields import IntField, StringField, BooleanField
 
 from pyvotal.manager import ResourceManager
-from pyvotal.membership import MembershipManager
+from pyvotal.memberships import MembershipManager
 from pyvotal.iterations import IterationManager
 from pyvotal.stories import StoryManager
 from pyvotal.fields import PyDateTimeField

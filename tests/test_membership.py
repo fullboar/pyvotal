@@ -17,7 +17,7 @@
 from datetime import datetime
 
 
-from pyvotal.membership import Membership, Person
+from pyvotal.memberships import Membership, Person
 
 from tests.utils import _M
 
