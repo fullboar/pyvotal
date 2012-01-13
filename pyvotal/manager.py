@@ -67,6 +67,7 @@ class ResourceManager(object):
         obj = self.cls()
         obj._from_etree(etree)
         obj.client = self.client
+        obj.endpoint = self.base_resource
         return obj
 
     def _contribute_to_all_request(self, url, params, **kwargs):

@@ -19,7 +19,7 @@ from client import Client
 from exceptions import PyvotalException
 from projects import ProjectManager, Project
 from stories import  Story
-
+from tasks import Task
 
 class PTracker(object):
     """
@@ -58,6 +58,11 @@ class PTracker(object):
         s =  Story()
         s.client = self.client
         return s
+
+    def Task(self):
+        t =  Task()
+        t.client = self.client
+        return t
 
 
     """

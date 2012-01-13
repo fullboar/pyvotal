@@ -122,6 +122,37 @@ def move_story_command(pid, story_id, move, target):
     s.move(move, target)
     print "Story moved"
 
+def list_tasks_command(pid, story_id):
+    s = p.Story()
+    s.project_id = pid
+    s.id = story_id
+    for t in s.tasks.all():
+        print "%s %s" % (t.id, t.description)
+
+def add_task_command(pid, story_id, desc):
+    s = p.Story()
+    s.project_id = pid
+    s.id = story_id
+    t = p.Task()
+    t.description = desc
+    t = s.tasks.add(t)
+    print "Task #%s added" % t.id
+
+def update_task_command(pid, story_id, task_id, desc):
+    s = p.Story()
+    s.project_id = pid
+    s.id = story_id
+    t = s.tasks.get(task_id)
+    t.description = desc
+    t.save()
+    print "Task #%s updated" % t.id
+
+def delete_task_command(pid, story_id, task_id):
+    s = p.Story()
+    s.project_id = pid
+    s.id = story_id
+    s.tasks.delete(task_id)
+    print "Task #%s deleted" % task_id
 
 COMMANDS = dict()
 COMMANDS['list'] = list_command
@@ -137,6 +168,10 @@ COMMANDS['delete_story'] = delete_story_command
 COMMANDS['add_note'] = add_note_command
 COMMANDS['add_attachment'] = add_attachment_command
 COMMANDS['move'] = move_story_command
+COMMANDS['tasks'] = list_tasks_command
+COMMANDS['add_task'] = add_task_command
+COMMANDS['update_task'] = update_task_command
+COMMANDS['delete_task'] = delete_task_command
 
 parser = argparse.ArgumentParser(description='List projects for given user.')
 parser.add_argument('user', help='pivotal username (email)')

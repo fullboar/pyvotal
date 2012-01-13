@@ -18,11 +18,11 @@
 from xml.etree.ElementTree import Element, SubElement, dump, tostring
 
 from dictshield.document import Document, EmbeddedDocument, diff_id_field
-from dictshield.fields import IntField, StringField, BooleanField
+from dictshield.fields import IntField, StringField
 from dictshield.fields.compound import EmbeddedDocumentField, ListField
 
 from pyvotal.utils import _node_text
-from pyvotal.fields import PyDateTimeField
+from pyvotal.fields import PyDateTimeField, PyBooleanField
 
 class XMLMixin(object):
     """
@@ -72,7 +72,7 @@ class XMLMixin(object):
             if isinstance(field, PyDateTimeField):
                 attribs['type']='datetime'
                 value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
-            if isinstance(field, BooleanField) and name is not 'id':
+            if isinstance(field, PyBooleanField):
                 attribs['type']='boolean'
                 value = str(value).lower()
 

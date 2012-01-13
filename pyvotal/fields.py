@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from dictshield.fields import DateTimeField
+from dictshield.fields import DateTimeField, BooleanField
 
 from dateutil import parser
 from pyvotal.tz import tzd
@@ -26,7 +26,7 @@ class PyDateTimeField(DateTimeField):
     """
     def __set__(self, instance, value):
         """If `value` is a string it is converted to datetime via python-dateutil.
-        
+
         A datetime may be used (and is encouraged).
         """
         if not value:
@@ -37,3 +37,11 @@ class PyDateTimeField(DateTimeField):
 
         instance._data[self.field_name] = value
 
+
+class PyBooleanField(BooleanField):
+    """
+    DictShield BooleanField wrapper which knows
+    how to deal with pivotal tracker booleans
+    """
+    def for_python(self, value):
+        return value == 'true'

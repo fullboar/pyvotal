@@ -16,13 +16,13 @@
 
 from xml.etree.ElementTree import SubElement
 
-from dictshield.fields import IntField, StringField, BooleanField
+from dictshield.fields import IntField, StringField
 
 from pyvotal.manager import ResourceManager
 from pyvotal.memberships import MembershipManager
 from pyvotal.iterations import IterationManager
 from pyvotal.stories import StoryManager
-from pyvotal.fields import PyDateTimeField
+from pyvotal.fields import PyDateTimeField, PyBooleanField
 from pyvotal.document import PyvotalDocument
 
 class ProjectManager(ResourceManager):
@@ -51,17 +51,17 @@ class Project(PyvotalDocument):
     account = StringField()
     first_iteration_start_time = PyDateTimeField()
     current_iteration_number = IntField()
-    enable_tasks = BooleanField()
+    enable_tasks = PyBooleanField()
     velocity_scheme = StringField()
     current_velocity = IntField()
     initial_velocity = IntField()
     number_of_done_iterations_to_show = IntField()
     labels = StringField()
-    allow_attachments = BooleanField()
-    public = BooleanField()
-    use_https = BooleanField()
-    bugs_and_chores_are_estimatable = BooleanField()
-    commit_mode = BooleanField()
+    allow_attachments = PyBooleanField()
+    public = PyBooleanField()
+    use_https = PyBooleanField()
+    bugs_and_chores_are_estimatable = PyBooleanField()
+    commit_mode = PyBooleanField()
     last_activity_at = PyDateTimeField()
 
     _tagname = 'project'

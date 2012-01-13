@@ -27,12 +27,11 @@ from tests.utils import _M, ManagerTest, readfile
 
 
 class TestStory:
-    def test_can_be_parse_from_xml(self):
+    def test_can_be_parsed_from_xml(self):
         # FIXME check if all fields parsed correctly
         xml = XML(readfile('story_get.xml'))
         s = Story()
         s._from_etree(xml)
-        print s.notes
         assert s.name == 'More power to shields'
         assert len(s.notes) == 1
         assert s.notes[0].author == 'Anatoly Kudinov'

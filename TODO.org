@@ -10,10 +10,11 @@
  + [ ] Make use of inline stories/memberships in request
  + [ ] Parse error response from api
  + [ ] Integrations support
-** TODO Nice to have [0/3]
+** TODO Nice to have [0/4]
  + [ ] logging
  + [ ] exception on delete undeletable resources
  + [ ] story filter builder
+ + [ ] extract save to Document
 ** Known errors
  + Duplicate project name
    

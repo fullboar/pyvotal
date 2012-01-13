@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dictshield.fields import IntField, StringField, BooleanField, EmailField,\
+from dictshield.fields import IntField, StringField, EmailField,\
       FloatField
 from dictshield.fields.compound import ListField, EmbeddedDocumentField
 
@@ -22,6 +22,7 @@ from pyvotal.manager import ResourceManager
 from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
+from pyvotal.tasks import TaskManager
 
 class StoryManager(ResourceManager):
     """
@@ -87,6 +88,18 @@ class Story(PyvotalDocument):
 
     xml_exclude = ['attachments', 'notes']
 
+    _tagname = 'story'
+
+
+    @property
+    def tasks(self):
+        if self.id is None:
+            raise PyvotalException("Story does not have id")
+        if not getattr(self, '_tasks', None):
+            self._tasks = TaskManager(self.client, self.project_id, self.id)
+
+        return self._tasks
+
     def add_attachment(self, name, fobj):
         self.client.post('projects/%s/stories/%s/attachments' % (self.project_id, self.id), None, files={'Filedata':(name,fobj)})
 
@@ -129,5 +142,4 @@ class Story(PyvotalDocument):
         return self.move('before', story_id)
 
 
-    _tagname = 'story'
 
