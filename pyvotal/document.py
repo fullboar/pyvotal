@@ -13,12 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Some dictshield subclasses with basic xml (de)serialization
+"""
 
-
-from xml.etree.ElementTree import Element, SubElement, dump, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 from dictshield.document import Document, EmbeddedDocument, diff_id_field
-from dictshield.fields import IntField, StringField
+from dictshield.fields import IntField
 from dictshield.fields.compound import EmbeddedDocumentField, ListField
 
 from pyvotal.utils import _node_text
@@ -27,9 +29,12 @@ from pyvotal.fields import PyDateTimeField, PyBooleanField
 
 class XMLMixin(object):
     """
-    Private methods
+    Mixin provides dictshield documents with xml serialization
     """
     def _from_etree(self, etree):
+        """
+        Fill document attributes from etree object
+        """
         for name, field in self._fields.items():
             if isinstance(field, EmbeddedDocumentField):
                 obj = field.document_type_obj()
@@ -37,14 +42,14 @@ class XMLMixin(object):
                 setattr(self, name, obj)
                 continue
             if isinstance(field, ListField):
-                l = []
+                list_value = []
                 real_field = field.fields[0]
                 xpath = "%s/%s" % (name, real_field.document_type_obj._tagname)
                 for tree in etree.findall(xpath):
                     obj = real_field.document_type_obj()
                     obj._from_etree(tree)
-                    l.append(obj)
-                setattr(self, name, l)
+                    list_value.append(obj)
+                setattr(self, name, list_value)
                 continue
 
             try:
@@ -55,6 +60,9 @@ class XMLMixin(object):
                 pass
 
     def _to_xml(self, parent=None, excludes=[]):
+        """
+        Serialize document to xml
+        """
         if parent is not None:
             root = SubElement(parent, self._tagname)
         else:
@@ -81,9 +89,9 @@ class XMLMixin(object):
             if isinstance(field, EmbeddedDocumentField):
                 value._to_xml(root)
             else:
-                el = SubElement(root, name)
-                el.text = str(value)
-                el.attrib = attribs
+                elem = SubElement(root, name)
+                elem.text = str(value)
+                elem.attrib = attribs
         # allow sub classes to add custom ad-hoc fields
         self._contribute_to_xml(root)
         return tostring(root)
@@ -102,4 +110,7 @@ class PyvotalDocument(Document, XMLMixin):
 
 
 class PyvotalEmbeddedDocument(EmbeddedDocument, XMLMixin):
+    """
+    Base class for embedded pivotal documents. i.e. tasks/notes
+    """
     pass

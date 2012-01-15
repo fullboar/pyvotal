@@ -96,7 +96,6 @@ class Project(PyvotalDocument):
 
     def _contribute_to_xml(self, etree):
         if getattr(self, "no_owner", False):
-            el = SubElement(etree, "no_owner")
-            el.text = str(True).lower()
-            el.attrib = {'type': 'boolean'}
-        pass
+            elem = SubElement(etree, "no_owner")
+            elem.text = str(True).lower()
+            elem.attrib = {'type': 'boolean'}

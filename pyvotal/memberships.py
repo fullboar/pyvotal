@@ -15,11 +15,10 @@
 # limitations under the License.
 
 
-from dictshield.fields import IntField, StringField, EmailField
+from dictshield.fields import StringField, EmailField
 from dictshield.fields.compound import  EmbeddedDocumentField
 
 from pyvotal.manager import ResourceManager
-from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
 

@@ -14,11 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Requests wrapper
+"""
 from xml.etree.ElementTree import XML
 
 import requests
 
-from exceptions import AccessDenied, PyvotalException
+from pyvotal.exceptions import AccessDenied, PyvotalException
 
 
 class Client(object):
@@ -35,6 +38,9 @@ class Client(object):
     """
     @property
     def ssl(self):
+        """
+        If ssl is enabled
+        """
         return self._ssl
 
     @ssl.setter
@@ -47,17 +53,26 @@ class Client(object):
 
     @property
     def api_location(self):
+        """
+        Returns api endpoint with correct protocol(http(s))
+        """
         return "%s://www.pivotaltracker.com/services/v3/" % self._protocol
 
     """
     Public methods
     """
     def get(self, resource, **kwargs):
+        """
+        Perform get requset to resource
+        """
         kwargs = self._inject_token(kwargs)
         resp = requests.get(self._endpoint_for(resource), **kwargs)
         return self._process_resp(resp)
 
     def post(self, resource, data, **kwargs):
+        """
+        Perform post requset to resource
+        """
         kwargs = self._inject_token(kwargs)
         if 'files' not in kwargs:
             if len(data):
@@ -68,7 +83,10 @@ class Client(object):
         resp = requests.post(self._endpoint_for(resource), data=data, **kwargs)
         return self._process_resp(resp)
 
-    def put(self, resource, data, xml=True, **kwargs):
+    def put(self, resource, data, **kwargs):
+        """
+        Perform put requset to resource
+        """
         kwargs = self._inject_token(kwargs)
         #        if 'files' not in kwargs:
         if len(data):
@@ -81,6 +99,9 @@ class Client(object):
         return self._process_resp(resp)
 
     def delete(self, resource, **kwargs):
+        """
+        Perform delete requset to resource
+        """
         kwargs = self._inject_token(kwargs)
         resp = requests.delete(self._endpoint_for(resource), **kwargs)
 
@@ -90,6 +111,9 @@ class Client(object):
     Private methods
     """
     def _endpoint_for(self, resource):
+        """
+        Return full url to given resource
+        """
         return "%s%s" % (self.api_location, resource)
 
     def _inject_token(self, kwargs_dict):

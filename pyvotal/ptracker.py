@@ -15,11 +15,11 @@
 # limitations under the License.
 
 
-from client import Client
-from exceptions import PyvotalException
-from projects import ProjectManager, Project
-from stories import  Story
-from tasks import Task
+from pyvotal.client import Client
+from pyvotal.exceptions import PyvotalException
+from pyvotal.projects import ProjectManager, Project
+from pyvotal.stories import  Story
+from pyvotal.tasks import Task
 
 
 class PTracker(object):

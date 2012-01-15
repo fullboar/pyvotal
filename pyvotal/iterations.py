@@ -13,13 +13,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Iterations class and manager
+"""
 
-from dictshield.fields import IntField, StringField, EmailField,\
-      FloatField
+from dictshield.fields import IntField, FloatField
 
 from pyvotal.manager import ResourceManager
 from pyvotal.fields import PyDateTimeField
-from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
+from pyvotal.document import PyvotalDocument
 
 
 class IterationManager(ResourceManager):
