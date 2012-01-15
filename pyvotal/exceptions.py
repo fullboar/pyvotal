@@ -17,6 +17,7 @@
 Exceptions
 """
 
+
 class PyvotalException(Exception):
     """
     Base exception for pyvotal

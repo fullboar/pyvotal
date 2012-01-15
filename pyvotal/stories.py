@@ -13,10 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Stories class and manager
+"""
 
-from dictshield.fields import IntField, StringField, EmailField,\
-      FloatField
+from dictshield.fields import IntField, StringField
 from dictshield.fields.compound import ListField, EmbeddedDocumentField
+
+from pyvotal.exceptions import PyvotalException
 
 from pyvotal.manager import ResourceManager
 from pyvotal.fields import PyDateTimeField
