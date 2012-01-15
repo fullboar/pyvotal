@@ -25,7 +25,8 @@ class PyDateTimeField(DateTimeField):
     how to deal with pivotal tracker date strings
     """
     def __set__(self, instance, value):
-        """If `value` is a string it is converted to datetime via python-dateutil.
+        """If `value` is a string it is converted to datetime
+        via python-dateutil.
 
         A datetime may be used (and is encouraged).
         """

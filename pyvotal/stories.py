@@ -24,6 +24,7 @@ from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
 from pyvotal.tasks import TaskManager
 
+
 class StoryManager(ResourceManager):
     """
     Class for iteration retrieval. Availeable as Project.stories
@@ -31,15 +32,22 @@ class StoryManager(ResourceManager):
 
     def __init__(self, client, project_id):
         self.client = client
-        super(StoryManager, self).__init__(client, Story, 'projects/%s/stories' % project_id)
+
+        base_url = 'projects/%s/stories' % project_id
+        super(StoryManager, self).__init__(client, Story, base_url)
 
     def _contribute_to_all_request(self, url, params, **kwargs):
         if len(kwargs.keys()):
-            params['filter'] = ' '.join(['%s:%s' % (x, '"%s"' % kwargs[x] if ' ' in kwargs[x] else kwargs[x]) for x in kwargs.keys() ])
+            query = ['%s:%s' %
+                     (x,
+                      '"%s"' % kwargs[x] if ' ' in kwargs[x] else kwargs[x])
+                      for x in kwargs.keys()]
+            params['filter'] = ' '.join(query)
         return (url, params)
 
     def deliver_all_finished(self):
-        etree = self.client.put("%s/deliver_all_finished" % self.base_resource, "", xml=False)
+        url = "%s/deliver_all_finished" % self.base_resource
+        etree = self.client.put(url, "")
         result = list()
         for tree in etree.findall(self.cls._tagname):
             obj = self._obj_from_etree(tree)
@@ -90,7 +98,6 @@ class Story(PyvotalDocument):
 
     _tagname = 'story'
 
-
     @property
     def tasks(self):
         if self.id is None:
@@ -101,28 +108,31 @@ class Story(PyvotalDocument):
         return self._tasks
 
     def add_attachment(self, name, fobj):
-        self.client.post('projects/%s/stories/%s/attachments' % (self.project_id, self.id), None, files={'Filedata':(name,fobj)})
+        url = 'projects/%s/stories/%s/attachments' % (self.project_id, self.id)
+        self.client.post(url, None, files={'Filedata': (name, fobj)})
 
     def add_note(self, text):
+        url = 'projects/%s/stories/%s/notes/' % (self.project_id, self.id)
         data = "<note><text>%s</text></note>" % text
-        etree = self.client.post('projects/%s/stories/%s/notes/' % (self.project_id, self.id), data)
+        etree = self.client.post(url, data)
         obj = Note()
         obj._from_etree(etree)
         return obj
 
     def save(self):
+        url = 'projects/%s/stories/%s' % (self.project_id, self.id)
         data = self._to_xml(excludes=['id', 'url'])
-        self.client.put('projects/%s/stories/%s' % (self.project_id, self.id), data)
+        self.client.put(url, data)
         # FIXME return new story
 
-
     def move(self, move, target_id):
+        url = 'projects/%s/stories/%s/moves' % (self.project_id, self.id)
         kwargs = dict()
         kwargs['move[move]'] = move
-        kwargs['move[target]']= target_id
-        data = self.client.post('projects/%s/stories/%s/moves' % (self.project_id, self.id), "", params=kwargs)
+        kwargs['move[target]'] = target_id
+        data = self.client.post(url, "", params=kwargs)
 
-        obj =Story()
+        obj = Story()
         obj._from_etree(data)
         obj.client = self.client
         return obj
@@ -140,6 +150,3 @@ class Story(PyvotalDocument):
         else:
             story_id = story
         return self.move('before', story_id)
-
-
-

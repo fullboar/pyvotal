@@ -14,10 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import requests, warnings
 from xml.etree.ElementTree import XML
 
+import requests
+
 from exceptions import AccessDenied, PyvotalException
+
 
 class Client(object):
     """
@@ -69,13 +71,10 @@ class Client(object):
     def put(self, resource, data, xml=True, **kwargs):
         kwargs = self._inject_token(kwargs)
         #        if 'files' not in kwargs:
-        if xml==False:
-            warn("xml arg is deprecated", DeprecationWarning)
         if len(data):
             kwargs['headers']['Content-type'] = 'application/xml'
         else:
             kwargs['headers']['Content-Length'] = '0'
-
 
         resp = requests.put(self._endpoint_for(resource), data=data, **kwargs)
 
@@ -101,7 +100,7 @@ class Client(object):
             if 'headers' in kwargs_dict:
                 kwargs_dict['headers']['X-TrackerToken'] = self.token
             else:
-                kwargs_dict['headers'] = {'X-TrackerToken':self.token}
+                kwargs_dict['headers'] = {'X-TrackerToken': self.token}
 
         return kwargs_dict
 
@@ -110,11 +109,11 @@ class Client(object):
         if resp.status_code == 401:
             raise AccessDenied()
         if resp.status_code != 200:
-            raise PyvotalException("Call to api ended with %s code.\nResponse body:\n %s" % (resp.status_code, resp.content))
+            msg = "Call to api ended with %s code.\nResponse body:\n %s"
+            raise PyvotalException(msg % (resp.status_code, resp.content))
         etree = XML(resp.content)
-        
+
         if etree.tag == 'message':
             # pivotal api call failed
             raise PyvotalException(etree.text)
         return etree
-

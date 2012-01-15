@@ -19,12 +19,13 @@ class PyvotalException(Exception):
     """
     Base exception for pyvotal
     """
-    
+
 
 class AccessDenied(Exception):
     """
     API response has 401 http code probably you have wrong token
     """
+
 
 class AuthException(Exception):
     """

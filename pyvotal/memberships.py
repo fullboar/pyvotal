@@ -30,8 +30,9 @@ class MembershipManager(ResourceManager):
 
     def __init__(self, client, project_id):
         self.client = client
-        super(MembershipManager, self).__init__(client, Membership, 'projects/%s/memberships' % project_id)
 
+        base_url = 'projects/%s/memberships' % project_id
+        super(MembershipManager, self).__init__(client, Membership, base_url)
 
 
 class Person(PyvotalEmbeddedDocument):

@@ -16,7 +16,7 @@
 """
 Timezone abbreviation quirks
 
-http://stackoverflow.com/questions/1703546/parsing-date-time-string-with-timezone-abbreviated-name-in-python
+http://stackoverflow.com/questions/1703546/
 """
 
 tz_str = '''-12 Y

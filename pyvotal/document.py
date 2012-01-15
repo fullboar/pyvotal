@@ -24,6 +24,7 @@ from dictshield.fields.compound import EmbeddedDocumentField, ListField
 from pyvotal.utils import _node_text
 from pyvotal.fields import PyDateTimeField, PyBooleanField
 
+
 class XMLMixin(object):
     """
     Private methods
@@ -38,7 +39,8 @@ class XMLMixin(object):
             if isinstance(field, ListField):
                 l = []
                 real_field = field.fields[0]
-                for tree in etree.findall("%s/%s" % (name,real_field.document_type_obj._tagname)):
+                xpath = "%s/%s" % (name, real_field.document_type_obj._tagname)
+                for tree in etree.findall(xpath):
                     obj = real_field.document_type_obj()
                     obj._from_etree(tree)
                     l.append(obj)
@@ -68,12 +70,12 @@ class XMLMixin(object):
 
             attribs = dict()
             if isinstance(field, IntField) and name is not 'id':
-                attribs['type']='integer'
+                attribs['type'] = 'integer'
             if isinstance(field, PyDateTimeField):
-                attribs['type']='datetime'
+                attribs['type'] = 'datetime'
                 value = value.strftime('%Y/%m/%d %H:%M:%S %Z')
             if isinstance(field, PyBooleanField):
-                attribs['type']='boolean'
+                attribs['type'] = 'boolean'
                 value = str(value).lower()
 
             if isinstance(field, EmbeddedDocumentField):
@@ -91,11 +93,13 @@ class XMLMixin(object):
 
     xml_exclude = list()
 
+
 @diff_id_field(IntField, ['id'])
 class PyvotalDocument(Document, XMLMixin):
     """
     Base class for pivotal objects representation
     """
+
 
 class PyvotalEmbeddedDocument(EmbeddedDocument, XMLMixin):
     pass

@@ -21,6 +21,7 @@ from projects import ProjectManager, Project
 from stories import  Story
 from tasks import Task
 
+
 class PTracker(object):
     """
     Base api entry point, retrives/stores user token
@@ -28,7 +29,8 @@ class PTracker(object):
     def __init__(self, user=None, password=None, token=None, ssl=True):
         """
         Init PTracker
-        If no token provided it would be requested using given user and password
+        If no token provided it would be requested using given user
+        and password
         """
         self.client = Client(ssl=ssl)
         if token is None:
@@ -43,27 +45,24 @@ class PTracker(object):
     def token(self):
         return self.client.token
 
-
-
     """
     Public methods
     """
 
     def Project(self):
-        p =  Project()
+        p = Project()
         p.client = self.client
         return p
 
     def Story(self):
-        s =  Story()
+        s = Story()
         s.client = self.client
         return s
 
     def Task(self):
-        t =  Task()
+        t = Task()
         t.client = self.client
         return t
-
 
     """
     Private methods
@@ -73,4 +72,3 @@ class PTracker(object):
             raise PyvotalException("Provide user AND password")
         tree = self.client.get('tokens/active', auth=(user, password))
         return tree.find('guid').text
-

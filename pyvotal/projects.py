@@ -25,6 +25,7 @@ from pyvotal.stories import StoryManager
 from pyvotal.fields import PyDateTimeField, PyBooleanField
 from pyvotal.document import PyvotalDocument
 
+
 class ProjectManager(ResourceManager):
     """
     Class for project retrieval. Availeable as PTracker.projects
@@ -97,6 +98,5 @@ class Project(PyvotalDocument):
         if getattr(self, "no_owner", False):
             el = SubElement(etree, "no_owner")
             el.text = str(True).lower()
-            el.attrib = {'type':'boolean'}
+            el.attrib = {'type': 'boolean'}
         pass
-        

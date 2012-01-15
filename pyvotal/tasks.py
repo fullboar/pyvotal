@@ -29,7 +29,7 @@ class TaskManager(ResourceManager):
 
     def __init__(self, client, project_id, story_id):
         self.client = client
-        endpoint =  'projects/%s/stories/%s/tasks' % (project_id, story_id)
+        endpoint = 'projects/%s/stories/%s/tasks' % (project_id, story_id)
         super(TaskManager, self).__init__(client, Task, endpoint)
 
 

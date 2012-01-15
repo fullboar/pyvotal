@@ -29,7 +29,9 @@ class IterationManager(ResourceManager):
 
     def __init__(self, client, project_id):
         self.client = client
-        super(IterationManager, self).__init__(client, Iteration, 'projects/%s/iterations' % project_id)
+
+        base_url = 'projects/%s/iterations' % project_id
+        super(IterationManager, self).__init__(client, Iteration, base_url)
 
 
 class Iteration(PyvotalDocument):
@@ -42,4 +44,3 @@ class Iteration(PyvotalDocument):
     team_strength = FloatField()
 
     _tagname = 'iteration'
-
