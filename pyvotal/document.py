@@ -102,11 +102,13 @@ class XMLMixin(object):
     xml_exclude = list()
 
 
-@diff_id_field(IntField, ['id'])
 class PyvotalDocument(Document, XMLMixin):
     """
     Base class for pivotal objects representation
     """
+
+# py25 class decorator
+PyvotalDocument = diff_id_field(IntField, ['id'])(PyvotalDocument)
 
 
 class PyvotalEmbeddedDocument(EmbeddedDocument, XMLMixin):

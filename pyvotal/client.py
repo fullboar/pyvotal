@@ -17,6 +17,11 @@
 """
 Requests wrapper
 """
+import sys
+
+if sys.version_info<(2,6,0):
+    from pyvotal.utils import property25 as property
+
 from xml.etree.ElementTree import XML
 
 import requests

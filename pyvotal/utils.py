@@ -20,3 +20,19 @@ def _node_text(etree, xpath):
     shortcut function
     """
     return etree.find(xpath).text
+
+
+class property25(property):
+    def __init__(self, fget, *args, **kwargs):
+        self.__doc__ = fget.__doc__
+        super(property25, self).__init__(fget, *args, **kwargs)
+
+    def setter(self, fset):
+        cls_ns = sys._getframe(1).f_locals
+        for k, v in cls_ns.iteritems():
+            if v == self:
+                propname = k
+                break
+        cls_ns[propname] = property25(self.fget, fset,
+                                        self.fdel, self.__doc__)
+        return cls_ns[propname]
