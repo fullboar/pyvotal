@@ -33,7 +33,10 @@ from pyvotal.document import PyvotalDocument
 
 class ProjectManager(ResourceManager):
     """
-    Class for project retrieval. Availeable as PTracker.projects
+    Class for projects retrieval.
+    Available as :attr:`PTracker.projects <pyvotal.PTracker.projects>`.
+
+    Note: you **can not** delete projects using v3 api.
     """
 
     def __init__(self, client):
@@ -47,9 +50,56 @@ class ProjectManager(ResourceManager):
 
 
 class Project(PyvotalDocument):
-    """
-    Parsed response from api with project info
-    """
+    """Parsed response from api with project info.
+Use :meth:`PTracker.Project <pyvotal.PTracker.Project>` to create instances of this class.
+
+Available fields:
+
++----------------------------------------+----------------------------------------+
+|id                                      |Integer                                 |
++----------------------------------------+----------------------------------------+
+|name                                    |String                                  |
++----------------------------------------+----------------------------------------+
+|iteraton_length                         |Integer                                 |
++----------------------------------------+----------------------------------------+
+|week_start_day                          |String                                  |
++----------------------------------------+----------------------------------------+
+|pont_scale                              |String                                  |
++----------------------------------------+----------------------------------------+
+|account                                 |String                                  |
++----------------------------------------+----------------------------------------+
+|first_iteration_start_time              |datetime                                |
++----------------------------------------+----------------------------------------+
+|current_iteration_number                |Integer                                 |
++----------------------------------------+----------------------------------------+
+|enable_tasks                            |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|velocity_scheme                         |String                                  |
++----------------------------------------+----------------------------------------+
+|current_velocity                        |Integer                                 |
++----------------------------------------+----------------------------------------+
+|initial_velocity                        |Integer                                 |
++----------------------------------------+----------------------------------------+
+|number_of_done_iterations_to_show       |Integer                                 |
++----------------------------------------+----------------------------------------+
+|labels                                  |String                                  |
++----------------------------------------+----------------------------------------+
+|allow_attachments                       |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|public                                  |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|use_https                               |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|bugs_and_chores_are_estimatable         |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|commit_mode                             |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|last_activity_at                        |datetime                                |
++----------------------------------------+----------------------------------------+
+
+Note: you should check field values for ``None`` as some of them may be missing.
+
+"""
     name = StringField()
     iteration_length = IntField()
     week_start_day = StringField()
@@ -74,6 +124,7 @@ class Project(PyvotalDocument):
 
     @property
     def memberships(self):
+        """:class:`~pyvotal.memberships.MembershipManager` to manipulate project`s memberships."""
         if self.id is None:
             raise PyvotalException("Project does not have id")
         if not getattr(self, '_memberships', None):
@@ -83,6 +134,7 @@ class Project(PyvotalDocument):
 
     @property
     def iterations(self):
+        """:class:`~pyvotal.iterations.IterationManager` to manipulate project`s iterations."""
         if self.id is None:
             raise PyvotalException("Project does not have id")
         if not getattr(self, '_iterations', None):
@@ -92,6 +144,7 @@ class Project(PyvotalDocument):
 
     @property
     def stories(self):
+        """:class:`~pyvotal.stories.StoryManager` to manipulate project`s stories."""
         if self.id is None:
             raise PyvotalException("Project does not have id")
         if not getattr(self, '_stories', None):

@@ -36,14 +36,20 @@ class PTracker(object):
         if token is None:
             token = self._get_token_for_credentials(user, password)
         self.client.token = token
-        self.projects = ProjectManager(self.client)
-
+        self._projects = None 
     """
     Properties
     """
     @property
     def token(self):
         return self.client.token
+
+
+    @property
+    def projects(self):
+        if self._projects is None:
+            self._projects = ProjectManager(self.client)
+        return self._projects
 
     """
     Public methods
