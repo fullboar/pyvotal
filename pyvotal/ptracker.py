@@ -18,61 +18,89 @@
 from pyvotal.client import Client
 from pyvotal.exceptions import PyvotalException
 from pyvotal.projects import ProjectManager, Project
+from pyvotal.memberships import Membership, Person
 from pyvotal.stories import  Story
 from pyvotal.tasks import Task
 
 
 class PTracker(object):
     """
-    Base api entry point, retrives/stores user token
+    Base api entry point
     """
     def __init__(self, user=None, password=None, token=None, ssl=True):
         """
-        Init PTracker
-        If no token provided it would be requested using given user
-        and password
+        :param user: pivotal username (optional if token provided)
+        :param password: pivotal password  (optional if token provided)
+        :param token: pivotal api token  (optional if user and password provided)
+        :param ssl: use https for api calls
+
+        If no token provided it would be requested using given username
+        and password.
         """
         self.client = Client(ssl=ssl)
         if token is None:
             token = self._get_token_for_credentials(user, password)
         self.client.token = token
         self._projects = None 
-    """
-    Properties
-    """
+
     @property
     def token(self):
+        """
+        User token,
+        obtained via api or passed to :class:`~pyvotal.PTracker` constructor::
+
+            from pyvotal import PTracker
+
+            ptracker = PTracker(user='SomeUser', password='password')
+            print 'SomeUser token is', ptraker.token
+        """
         return self.client.token
 
 
     @property
     def projects(self):
+        """
+        :class:`~pyvotal.projects.ProjectManager` to manipulate user`s projects.
+        """
         if self._projects is None:
             self._projects = ProjectManager(self.client)
         return self._projects
 
-    """
-    Public methods
-    """
 
     def Project(self):
+        """
+        Factory method. This method creates new :class:`~pyvotal.projects.Project` objects.
+        """
         p = Project()
         p.client = self.client
         return p
 
+    def Membership(self):
+        """
+        Factory method. This method creates new :class:`~pyvotal.memberships.Membership` objects.
+        """
+        m = Membership()
+        m.person = Person()
+        m.client = self.client
+        return m
+
+
     def Story(self):
+        """
+        Factory method. This method creates new :class:`~pyvotal.stories.Story` objects.
+        """
         s = Story()
         s.client = self.client
         return s
 
     def Task(self):
+        """
+        Factory method. This method creates new :class:`~pyvotal.tasks.Task` objects.
+        """
         t = Task()
         t.client = self.client
         return t
 
-    """
-    Private methods
-    """
     def _get_token_for_credentials(self, user=None, password=None):
         if user is None or password is None:
             raise PyvotalException("Provide user AND password")

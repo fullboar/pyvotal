@@ -26,7 +26,8 @@ from pyvotal.document import PyvotalDocument
 
 class IterationManager(ResourceManager):
     """
-    Class for iteration retrieval. Availeable as Project.iterations
+    Class for iterations retrieval.
+    Available as :attr:`Project.iterations <pyvotal.projects.Project.iterations>`
     """
 
     def __init__(self, client, project_id):
@@ -37,8 +38,21 @@ class IterationManager(ResourceManager):
 
 
 class Iteration(PyvotalDocument):
-    """
-    Parsed response from api with iteration info
+    """Parsed response from api with iteration info.
+
+Available fields:
+
++----------------------------------------+----------------------------------------+
+|id                                      |Integer                                 |
++----------------------------------------+----------------------------------------+
+|number                                  |Integer                                 |
++----------------------------------------+----------------------------------------+
+|start                                   |datetime                                |
++----------------------------------------+----------------------------------------+
+|finish                                  |datetime                                |
++----------------------------------------+----------------------------------------+
+|team_strength                           |Float                                   |
++----------------------------------------+----------------------------------------+
     """
     number = IntField()
     start = PyDateTimeField()

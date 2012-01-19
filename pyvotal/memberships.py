@@ -27,7 +27,8 @@ from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
 class MembershipManager(ResourceManager):
     """
-    Class for memberships retrieval. Availeable as Project.memberships
+    Class for memberships retrieval.
+    Available as :class:`Project.memberships <pyvotal.projects.Project.memberships>`.
     """
 
     def __init__(self, client, project_id):
@@ -38,6 +39,16 @@ class MembershipManager(ResourceManager):
 
 
 class Person(PyvotalEmbeddedDocument):
+    """Class represents person with project membership. Available fields:
+
++----------------------------------------+----------------------------------------+
+|email                                   |String                                  |
++----------------------------------------+----------------------------------------+
+|name                                    |String                                  |
++----------------------------------------+----------------------------------------+
+|initials                                |String                                  |
++----------------------------------------+----------------------------------------+
+    """
     email = EmailField()
     name = StringField()
     initials = StringField()
@@ -46,9 +57,19 @@ class Person(PyvotalEmbeddedDocument):
 
 
 class Membership(PyvotalDocument):
-    """
-    Parsed response from api with membership info
-    """
+    """Parsed response from api with membership info.
+Use :meth:`PTracker.Membership <pyvotal.PTracker.Membership>` to create instances of this class.
+
+Available fields:
+
++----------------------------------------+----------------------------------------+
+|id                                      |Integer                                 |
++----------------------------------------+----------------------------------------+
+|role                                    |String                                  |
++----------------------------------------+----------------------------------------+
+|person                                  |:class:`~pyvotal.memberships.Person`    |
++----------------------------------------+----------------------------------------+
+"""
     role = StringField()
     person = EmbeddedDocumentField(Person)
 
@@ -56,12 +77,21 @@ class Membership(PyvotalDocument):
 
     @property
     def is_owner(self):
+        """
+        ``True`` if person is project owner.
+        """
         return self.role == 'Owner'
 
     @property
     def is_member(self):
+        """
+        ``True`` if person is project member.
+        """
         return self.role == 'Member'
 
     @property
     def is_viewer(self):
+        """
+        ``True`` if person is project viewer.
+        """
         return self.role == 'Viewer'

@@ -1,9 +1,10 @@
 
 * Todo
-** TODO Testing [2/3]
+** TODO Testing [2/4]
   + [X] Check if pivotal can parse capitalazed boolean values. CANT!
   + [X] Check if pivotal can parse boolean fields w/o type attribute. CAN
   + [ ] Can we specify notes on story creation?
+  + [ ] Can we update memberships in place ?
 ** TODO Must have till 1.0 [0/5]
  + [ ] Empty list field serialization is wrong!!
  + [ ] You can empty story field on update only with url params

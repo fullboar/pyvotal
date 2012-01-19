@@ -31,7 +31,7 @@ from pyvotal.tasks import TaskManager
 
 class StoryManager(ResourceManager):
     """
-    Class for iteration retrieval. Availeable as Project.stories
+    Class for stories management. Availeable as :attr:`Project.stories <pyvotal.projects.Project.stories>`
     """
 
     def __init__(self, client, project_id):
@@ -50,6 +50,20 @@ class StoryManager(ResourceManager):
         return (url, params)
 
     def deliver_all_finished(self):
+        """Delivers all finished stories.
+
+:return: list of delivered :class:`Stories <pyvotal.stories.Story>`
+        
+::
+
+  from pyvotal import PTracker
+  
+  ptracker = PTracker(token='token')
+  project = ptracker.projects.get(1231)
+  
+  for story in projects.stories.deliver_all_finished():
+    print story.id, story.name, 'delivered'"""
+
         url = "%s/deliver_all_finished" % self.base_resource
         etree = self.client.put(url, "")
         result = list()
@@ -78,8 +92,42 @@ class Attachment(PyvotalEmbeddedDocument):
 
 
 class Story(PyvotalDocument):
-    """
-    Parsed response from api with story info
+    """Parsed response from api with story info. Use :meth:`PTracker.Story <pyvotal.PTracker.Story>` to create instances of this class.
+
+Available fields:
+
++----------------------------------------+----------------------------------------+
+|id                                      |Integer                                 |
++----------------------------------------+----------------------------------------+
+|project_id                              |Integer                                 |
++----------------------------------------+----------------------------------------+
+|story_type                              |String                                  |
++----------------------------------------+----------------------------------------+
+|url                                     |String                                  |
++----------------------------------------+----------------------------------------+
+|estimate                                |Integer                                 |
++----------------------------------------+----------------------------------------+
+|current_state                           |String                                  |
++----------------------------------------+----------------------------------------+
+|description                             |String                                  |
++----------------------------------------+----------------------------------------+
+|name                                    |String                                  |
++----------------------------------------+----------------------------------------+
+|requested_by                            |String                                  |
++----------------------------------------+----------------------------------------+
+|owned_by                                |String                                  |
++----------------------------------------+----------------------------------------+
+|created_at                              |datetime                                |
++----------------------------------------+----------------------------------------+
+|accepted_at                             |datetime                                |
++----------------------------------------+----------------------------------------+
+|labels                                  |String                                  |
++----------------------------------------+----------------------------------------+
+|notes                                   |list of :class:`Note`                   |
++----------------------------------------+----------------------------------------+
+|attachments                             |list of :class:`Attachment`             |
++----------------------------------------+----------------------------------------+
+
     """
     project_id = IntField()
     story_type = StringField()
@@ -104,6 +152,7 @@ class Story(PyvotalDocument):
 
     @property
     def tasks(self):
+        """:class:`~pyvotal.tasks.TaskManager` to manipulate story`s tasks."""
         if self.id is None:
             raise PyvotalException("Story does not have id")
         if not getattr(self, '_tasks', None):
@@ -116,6 +165,23 @@ class Story(PyvotalDocument):
         self.client.post(url, None, files={'Filedata': (name, fobj)})
 
     def add_note(self, text):
+        """Adds note to story.
+
+:param text: Text to be added to story as note.
+:return: Created :class:`~pyvotal.stories.Note`.
+
+::
+
+  from pyvotal import PTracker
+  
+  ptracker = PTracker(token='token')
+
+  project = ptracker.projects.get(1231)
+  story = projects.stories.get(1232)
+
+  note = story.add_note("Usefull info")
+  print note.id, note.noted_at """
+        
         url = 'projects/%s/stories/%s/notes/' % (self.project_id, self.id)
         data = "<note><text>%s</text></note>" % text
         etree = self.client.post(url, data)
@@ -124,6 +190,19 @@ class Story(PyvotalDocument):
         return obj
 
     def save(self):
+        """Saves changes to existing story back to pivotal.
+
+::
+
+  from pyvotal import PTracker
+  
+  ptracker = PTracker(token='token')
+  project = ptracker.projects.get(1231)
+  
+  story = projects.stories.get(1232)
+  story.estimate = 3
+  story.save()"""
+
         url = 'projects/%s/stories/%s' % (self.project_id, self.id)
         data = self._to_xml(excludes=['id', 'url'])
         self.client.put(url, data)
@@ -142,6 +221,22 @@ class Story(PyvotalDocument):
         return obj
 
     def move_after(self, story):
+        """
+        Moves story after given.
+
+        :param story: Story id or :class:`~pyvotal.stories.Story`. 
+        :return: Updated  :class:`~pyvotal.stories.Story`.
+        
+        ::
+
+          from pyvotal import PTracker
+          
+          ptracker = PTracker(token='token')
+          project = ptracker.projects.get(1231)
+          
+          story = projects.stories.get(1232)
+          story.move_after(1233)"""
+
         if isinstance(story, Story):
             story_id = story.id
         else:
@@ -149,6 +244,22 @@ class Story(PyvotalDocument):
         return self.move('after', story_id)
 
     def move_before(self, story):
+        """
+        Moves story before given.
+
+        :param story: Story id or :class:`~pyvotal.stories.Story`. 
+        :return: Updated  :class:`~pyvotal.stories.Story`.
+        
+        ::
+
+          from pyvotal import PTracker
+          
+          ptracker = PTracker(token='token')
+          project = ptracker.projects.get(1231)
+          
+          story = projects.stories.get(1232)
+          story.move_before(another_story)"""
+
         if isinstance(story, Story):
             story_id = story.id
         else:
