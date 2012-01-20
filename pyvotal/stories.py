@@ -162,20 +162,20 @@ Available fields:
 
     def add_attachment(self, name, fobj):
         """Adds attachment to story.
+        
+        :param name: Attachment file name.
+        :param fobj: File-like object to upload.
 
-:param name: Attachment file name.
-:param fobj: File-like object to upload.
-
-::
-
-  from pyvotal import PTracker
+        ::
+        
+          from pyvotal import PTracker
   
-  ptracker = PTracker(token='token')
+          ptracker = PTracker(token='token')
 
-  project = ptracker.projects.get(1231)
-  story = projects.stories.get(1232)
+          project = ptracker.projects.get(1231)
+          story = projects.stories.get(1232)
 
-  story.add_attachment("hosts", open("/etc/hosts")"""
+          story.add_attachment("hosts", open("/etc/hosts"))"""
 
         url = 'projects/%s/stories/%s/attachments' % (self.project_id, self.id)
         self.client.post(url, None, files={'Filedata': (name, fobj)})
@@ -183,21 +183,21 @@ Available fields:
     def add_note(self, text):
         """Adds note to story.
 
-:param text: Text to be added to story as note.
-:return: Created :class:`~pyvotal.stories.Note`.
+        :param text: Text to be added to story as note.
+        :return: Created :class:`~pyvotal.stories.Note`.
 
-::
+        ::
 
-  from pyvotal import PTracker
+          from pyvotal import PTracker
   
-  ptracker = PTracker(token='token')
+          ptracker = PTracker(token='token')
 
-  project = ptracker.projects.get(1231)
-  story = projects.stories.get(1232)
+          project = ptracker.projects.get(1231)
+          story = projects.stories.get(1232)
 
-  note = story.add_note("Usefull info")
-  print note.id, note.noted_at """
-        
+          note = story.add_note("Usefull info")
+          print note.id, note.noted_at """
+
         url = 'projects/%s/stories/%s/notes/' % (self.project_id, self.id)
         data = "<note><text>%s</text></note>" % text
         etree = self.client.post(url, data)
