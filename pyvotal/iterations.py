@@ -25,6 +25,7 @@ from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument
 from pyvotal.stories import Story
 
+
 class IterationManager(ResourceManager):
     """
     Class for iterations retrieval.

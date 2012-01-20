@@ -65,12 +65,12 @@ Available fields:
 ::
 
   from pyvotal import PTracker
-  
+
   ptracker = PTracker(token='token')
   story = ptracker.Story()
   story.id = story_id
   story.project_id = project_id
-  
+
   task = story.tasks.get(task_id)
   task.complete = True
   task.save()

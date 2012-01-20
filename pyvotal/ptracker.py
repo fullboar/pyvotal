@@ -41,7 +41,7 @@ class PTracker(object):
         if token is None:
             token = self._get_token_for_credentials(user, password)
         self.client.token = token
-        self._projects = None 
+        self._projects = None
 
     @property
     def token(self):
@@ -56,7 +56,6 @@ class PTracker(object):
         """
         return self.client.token
 
-
     @property
     def projects(self):
         """
@@ -65,7 +64,6 @@ class PTracker(object):
         if self._projects is None:
             self._projects = ProjectManager(self.client)
         return self._projects
-
 
     def Project(self):
         """
@@ -83,7 +81,6 @@ class PTracker(object):
         m.person = Person()
         m.client = self.client
         return m
-
 
     def Story(self):
         """

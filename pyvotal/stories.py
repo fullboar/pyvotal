@@ -53,14 +53,14 @@ class StoryManager(ResourceManager):
         """Delivers all finished stories.
 
 :return: list of delivered :class:`Stories <pyvotal.stories.Story>`
-        
+
 ::
 
   from pyvotal import PTracker
-  
+
   ptracker = PTracker(token='token')
   project = ptracker.projects.get(1231)
-  
+
   for story in projects.stories.deliver_all_finished():
     print story.id, story.name, 'delivered'"""
 
@@ -162,14 +162,14 @@ Available fields:
 
     def add_attachment(self, name, fobj):
         """Adds attachment to story.
-        
+
         :param name: Attachment file name.
         :param fobj: File-like object to upload.
 
         ::
-        
+
           from pyvotal import PTracker
-  
+
           ptracker = PTracker(token='token')
 
           project = ptracker.projects.get(1231)
@@ -189,7 +189,7 @@ Available fields:
         ::
 
           from pyvotal import PTracker
-  
+
           ptracker = PTracker(token='token')
 
           project = ptracker.projects.get(1231)
@@ -211,10 +211,10 @@ Available fields:
 ::
 
   from pyvotal import PTracker
-  
+
   ptracker = PTracker(token='token')
   project = ptracker.projects.get(1231)
-  
+
   story = projects.stories.get(1232)
   story.estimate = 3
   story.save()"""
@@ -240,16 +240,16 @@ Available fields:
         """
         Moves story after given.
 
-        :param story: Story id or :class:`~pyvotal.stories.Story`. 
+        :param story: Story id or :class:`~pyvotal.stories.Story`.
         :return: Updated  :class:`~pyvotal.stories.Story`.
-        
+
         ::
 
           from pyvotal import PTracker
-          
+
           ptracker = PTracker(token='token')
           project = ptracker.projects.get(1231)
-          
+
           story = projects.stories.get(1232)
           story.move_after(1233)"""
 
@@ -263,16 +263,16 @@ Available fields:
         """
         Moves story before given.
 
-        :param story: Story id or :class:`~pyvotal.stories.Story`. 
+        :param story: Story id or :class:`~pyvotal.stories.Story`.
         :return: Updated  :class:`~pyvotal.stories.Story`.
-        
+
         ::
 
           from pyvotal import PTracker
-          
+
           ptracker = PTracker(token='token')
           project = ptracker.projects.get(1231)
-          
+
           story = projects.stories.get(1232)
           story.move_before(another_story)"""
 
