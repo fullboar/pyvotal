@@ -58,6 +58,8 @@ class XMLMixin(object):
                 # no value for field
                 # FIXME handle it somehow
                 pass
+            
+        self._contribute_from_etree(etree)
 
     def _to_xml(self, parent=None, excludes=[]):
         """
@@ -97,6 +99,10 @@ class XMLMixin(object):
         return tostring(root)
 
     def _contribute_to_xml(self, etree):
+        pass
+
+
+    def _contribute_from_etree(self, etree):
         pass
 
     xml_exclude = list()

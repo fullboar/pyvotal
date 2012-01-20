@@ -59,6 +59,8 @@ def list_iterations_command(pid, *args):
 
     for i in project.iterations.all(**kwargs):
         print "%s %s to %s" % (i.number, i.start, i.finish)
+        for s in i.stories:
+            print "\t%s %s" % (s.id, s.name)
 
 def list_stories_command(pid, *args):
     project = p.Project()

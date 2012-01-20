@@ -18,11 +18,12 @@ Iterations class and manager
 """
 
 from dictshield.fields import IntField, FloatField
+from dictshield.fields.compound import ListField, EmbeddedDocumentField
 
 from pyvotal.manager import ResourceManager
 from pyvotal.fields import PyDateTimeField
 from pyvotal.document import PyvotalDocument
-
+from pyvotal.stories import Story
 
 class IterationManager(ResourceManager):
     """
@@ -53,6 +54,8 @@ Available fields:
 +----------------------------------------+----------------------------------------+
 |team_strength                           |Float                                   |
 +----------------------------------------+----------------------------------------+
+|stories                                 |list of :class:`~pyvotal.stories.Story`  |
++----------------------------------------+----------------------------------------+
     """
     number = IntField()
     start = PyDateTimeField()
@@ -60,3 +63,13 @@ Available fields:
     team_strength = FloatField()
 
     _tagname = 'iteration'
+
+    def _contribute_from_etree(self, etree):
+        list_value = []
+        xpath = "stories/story"
+        for tree in etree.findall(xpath):
+            obj = Story()
+            obj.client = self.client
+            obj._from_etree(tree)
+            list_value.append(obj)
+        setattr(self, 'stories', list_value)

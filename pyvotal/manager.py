@@ -65,8 +65,8 @@ class ResourceManager(object):
 
     def _obj_from_etree(self, etree):
         obj = self.cls()
-        obj._from_etree(etree)
         obj.client = self.client
+        obj._from_etree(etree)
         obj.endpoint = self.base_resource
         return obj
 
