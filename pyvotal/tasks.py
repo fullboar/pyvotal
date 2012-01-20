@@ -36,8 +36,21 @@ class TaskManager(ResourceManager):
 
 
 class Task(PyvotalDocument):
-    """
-    Parsed response from api with task info
+    """Parsed response from api with task info. Use :meth:`PTracker.Task <pyvotal.PTracker.Task>` to create instances of this class.
+
+Available fields:
+
++----------------------------------------+----------------------------------------+
+|id                                      |Integer                                 |
++----------------------------------------+----------------------------------------+
+|description                             |String                                  |
++----------------------------------------+----------------------------------------+
+|position                                |Integer                                 |
++----------------------------------------+----------------------------------------+
+|compelete                               |Boolean                                 |
++----------------------------------------+----------------------------------------+
+|created_at                              |datetime                                |
++----------------------------------------+----------------------------------------+
     """
     description = StringField()
     position = IntField()
@@ -47,6 +60,21 @@ class Task(PyvotalDocument):
     _tagname = 'task'
 
     def save(self):
+        """Saves changes to existing task back to pivotal.
+
+::
+
+  from pyvotal import PTracker
+  
+  ptracker = PTracker(token='token')
+  story = ptracker.Story()
+  story.id = story_id
+  story.project_id = project_id
+  
+  task = story.tasks.get(task_id)
+  task.complete = True
+  task.save()
+  """
         # FIXME do we need this
         data = self._to_xml(excludes=['id', 'created_at'])
         self.client.put('%s/%s' % (self.endpoint, self.id), data)

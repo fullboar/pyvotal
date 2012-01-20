@@ -161,6 +161,22 @@ Available fields:
         return self._tasks
 
     def add_attachment(self, name, fobj):
+        """Adds attachment to story.
+
+:param name: Attachment file name.
+:param fobj: File-like object to upload.
+
+::
+
+  from pyvotal import PTracker
+  
+  ptracker = PTracker(token='token')
+
+  project = ptracker.projects.get(1231)
+  story = projects.stories.get(1232)
+
+  story.add_attachment("hosts", open("/etc/hosts")"""
+
         url = 'projects/%s/stories/%s/attachments' % (self.project_id, self.id)
         self.client.post(url, None, files={'Filedata': (name, fobj)})
 

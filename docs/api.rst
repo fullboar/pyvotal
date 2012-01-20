@@ -110,7 +110,7 @@ Memberships
 
 	  project = ptracker.projects.get(1231)
 	  
-	  for membership im project.memberships.all():
+	  for membership in project.memberships.all():
 	      print membership.id, membership.role, membership.person.email
           
 
@@ -219,7 +219,7 @@ Stories
 
 	 project = ptracker.projects.get(1231)
 	  
-	 for story im project.stories.all(type="Feature", state="unstarted", limit=10, offset=20):
+	 for story in project.stories.all(type="Feature", state="unstarted", limit=10, offset=20):
 	     print story.id, story.name, story.description
 
 
@@ -256,6 +256,88 @@ Stories
 
 
 .. autoclass:: pyvotal.stories.Story
+  :members:
+
+
+
+Tasks
+--------
+.. autoclass:: pyvotal.tasks.TaskManager
+   :members:
+
+   .. method:: add(task)
+
+      :param task: :class:`~pyvotal.tasks.Task`
+      :return:  :class:`~pyvotal.tasks.Task`
+
+      Adds new task to story::
+      
+          from pyvotal import PTracker
+	  
+	  ptracker = PTracker(token='token')
+	  story = ptracker.Story()
+	  story.id = story_id
+	  story.project_id = project_id
+	 
+	  task = ptracker.Task()
+	  task.description = "clean shields"
+	  task = story.tasks.add(task)
+	  print "Task", task.id, "added"
+      
+
+   .. method:: all()
+     
+     :return: list of :class:`~pyvotal.tasks.Task` objects
+
+     Returns story`s tasks::
+      
+         from pyvotal import PTracker
+	  
+	 ptracker = PTracker(token='token')
+	 story = ptracker.Story()
+	 story.id = story_id
+	 story.project_id = project_id
+	  
+	 for task in story.tasks.all():
+	     print task.id, task.description
+
+
+   .. method:: get(task_id)
+
+      :param task_id: Integer task id
+      :return: :class:`~pyvotal.tasks.Task` object
+
+      Returns story`s task with given id::
+      
+          from pyvotal import PTracker
+	  
+	  ptracker = PTracker(token='token')
+	  story = ptracker.Story()
+	  story.id = story_id
+	  story.project_id = project_id
+
+	  task = story.tasks.get(task_id)
+	  print task.id, task.description
+
+   .. method:: delete(task_id)
+
+      :param task_id: Id of task to delete.
+      :return: Deleted :class:`~pyvotal.tasks.Task` object
+
+      Deletes task with given id::
+      
+          from pyvotal import PTracker
+	  
+	  ptracker = PTracker(token='token')
+	  story = ptracker.Story()
+	  story.id = story_id
+	  story.project_id = project_id
+
+	  task = story.tasks.delete(task_id)
+	  print "Task", task.id, task.description, "deleted"
+
+
+.. autoclass:: pyvotal.tasks.Task
   :members:
 
 
