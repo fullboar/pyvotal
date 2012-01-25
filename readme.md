@@ -10,7 +10,7 @@ Use [pip] (http://pip-installer.org/):
 Usage
 =======
 
-Docs avaliable at [readthedocs.org] (http://readthedocs.org/docs/pyvotal/en/latest/)
+Docs available at [readthedocs.org] (http://readthedocs.org/docs/pyvotal/en/latest/)
 
 Quick example:
 
