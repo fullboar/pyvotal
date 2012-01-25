@@ -13,7 +13,7 @@ Pyvotal is python client to `Pivotal Tracker API <https://www.pivotaltracker.com
 
 Python 2.x >= 2.5 is supported.
 
-Covers all api, except integrations and activity feed.
+Covers all api, except activity feed.
 
 Pyvotal can be installed using `pip <http://www.pip-installer.org>`_::
 

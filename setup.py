@@ -17,8 +17,9 @@
 from setuptools import setup
 
 setup(name='pyvotal',
-    version = '0.1',
-    description = 'pivotal tracker api client',
+    license='Apache 2.0',
+    version = '0.2',
+    description = 'Pivotal tracker api client. https://www.pivotaltracker.com/help/api?version=v3',
     author = 'Anatoly Kudinov',
     author_email = 'zz@rialabs.org',
     url = 'https://github.com/fullboar/pyvotal',

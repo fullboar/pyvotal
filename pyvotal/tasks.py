@@ -26,7 +26,7 @@ from pyvotal.document import PyvotalDocument
 
 class TaskManager(ResourceManager):
     """
-    Class for tasks retrieval. Availeable as Story.tasks
+    Class for tasks retrieval. Availeable as :attr:`Story.tasks <pyvotal.stories.Story.tasks>`.
     """
 
     def __init__(self, client, project_id, story_id):

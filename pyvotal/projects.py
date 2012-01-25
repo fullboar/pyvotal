@@ -20,6 +20,7 @@ Projectss class and manager
 from xml.etree.ElementTree import SubElement
 
 from dictshield.fields import IntField, StringField
+from dictshield.fields.compound import ListField, EmbeddedDocumentField
 
 from pyvotal.exceptions import PyvotalException
 
@@ -28,7 +29,7 @@ from pyvotal.memberships import MembershipManager
 from pyvotal.iterations import IterationManager
 from pyvotal.stories import StoryManager
 from pyvotal.fields import PyDateTimeField, PyBooleanField
-from pyvotal.document import PyvotalDocument
+from pyvotal.document import PyvotalDocument, PyvotalEmbeddedDocument
 
 
 class ProjectManager(ResourceManager):
@@ -49,53 +50,86 @@ class ProjectManager(ResourceManager):
         return (url, params)
 
 
+class Integration(PyvotalEmbeddedDocument):
+    """Parsed response from api with integration info.
+Available as :attr:`Project.integrations <pyvotal.projects.Project.integrations>`
+
+Available fields:
+
++----------------------------------+----------------------------------------------+
+|id                                |Integer                                       |
++----------------------------------+----------------------------------------------+
+|type                              |String                                        |
++----------------------------------+----------------------------------------------+
+|name                              |String                                        |
++----------------------------------+----------------------------------------------+
+|field_name                        |String                                        |
++----------------------------------+----------------------------------------------+
+|field_label                       |String                                        |
++----------------------------------+----------------------------------------------+
+|active                            |Boolean                                       |
++----------------------------------+----------------------------------------------+
+
+"""
+    id = IntField()
+    type = StringField()
+    name = StringField()
+    field_name = StringField()
+    field_label = StringField()
+    active = PyBooleanField()
+
+    _tagname = 'integration'
+
+
 class Project(PyvotalDocument):
     """Parsed response from api with project info.
 Use :meth:`PTracker.Project <pyvotal.PTracker.Project>` to create instances of this class.
 
 Available fields:
 
-+----------------------------------------+----------------------------------------+
-|id                                      |Integer                                 |
-+----------------------------------------+----------------------------------------+
-|name                                    |String                                  |
-+----------------------------------------+----------------------------------------+
-|iteraton_length                         |Integer                                 |
-+----------------------------------------+----------------------------------------+
-|week_start_day                          |String                                  |
-+----------------------------------------+----------------------------------------+
-|pont_scale                              |String                                  |
-+----------------------------------------+----------------------------------------+
-|account                                 |String                                  |
-+----------------------------------------+----------------------------------------+
-|first_iteration_start_time              |datetime                                |
-+----------------------------------------+----------------------------------------+
-|current_iteration_number                |Integer                                 |
-+----------------------------------------+----------------------------------------+
-|enable_tasks                            |Boolean                                 |
-+----------------------------------------+----------------------------------------+
-|velocity_scheme                         |String                                  |
-+----------------------------------------+----------------------------------------+
-|current_velocity                        |Integer                                 |
-+----------------------------------------+----------------------------------------+
-|initial_velocity                        |Integer                                 |
-+----------------------------------------+----------------------------------------+
-|number_of_done_iterations_to_show       |Integer                                 |
-+----------------------------------------+----------------------------------------+
-|labels                                  |String                                  |
-+----------------------------------------+----------------------------------------+
-|allow_attachments                       |Boolean                                 |
-+----------------------------------------+----------------------------------------+
-|public                                  |Boolean                                 |
-+----------------------------------------+----------------------------------------+
-|use_https                               |Boolean                                 |
-+----------------------------------------+----------------------------------------+
-|bugs_and_chores_are_estimatable         |Boolean                                 |
-+----------------------------------------+----------------------------------------+
-|commit_mode                             |Boolean                                 |
-+----------------------------------------+----------------------------------------+
-|last_activity_at                        |datetime                                |
-+----------------------------------------+----------------------------------------+
++----------------------------------+----------------------------------------------+
+|id                                |Integer                                       |
++----------------------------------+----------------------------------------------+
+|name                              |String                                        |
++----------------------------------+----------------------------------------------+
+|iteraton_length                   |Integer                                       |
++----------------------------------+----------------------------------------------+
+|week_start_day                    |String                                        |
++----------------------------------+----------------------------------------------+
+|pont_scale                        |String                                        |
++----------------------------------+----------------------------------------------+
+|account                           |String                                        |
++----------------------------------+----------------------------------------------+
+|first_iteration_start_time        |datetime                                      |
++----------------------------------+----------------------------------------------+
+|current_iteration_number          |Integer                                       |
++----------------------------------+----------------------------------------------+
+|enable_tasks                      |Boolean                                       |
++----------------------------------+----------------------------------------------+
+|velocity_scheme                   |String                                        |
++----------------------------------+----------------------------------------------+
+|current_velocity                  |Integer                                       |
++----------------------------------+----------------------------------------------+
+|initial_velocity                  |Integer                                       |
++----------------------------------+----------------------------------------------+
+|number_of_done_iterations_to_show |Integer                                       |
++----------------------------------+----------------------------------------------+
+|labels                            |String                                        |
++----------------------------------+----------------------------------------------+
+|allow_attachments                 |Boolean                                       |
++----------------------------------+----------------------------------------------+
+|public                            |Boolean                                       |
++----------------------------------+----------------------------------------------+
+|use_https                         |Boolean                                       |
++----------------------------------+----------------------------------------------+
+|bugs_and_chores_are_estimatable   |Boolean                                       |
++----------------------------------+----------------------------------------------+
+|commit_mode                       |Boolean                                       |
++----------------------------------+----------------------------------------------+
+|last_activity_at                  |datetime                                      |
++----------------------------------+----------------------------------------------+
+|integrations                      |list of :class:`~pyvotal.projects.Integration`|
++----------------------------------+----------------------------------------------+
 
 Note: you should check field values for ``None`` as some of them may be missing.
 
@@ -119,6 +153,10 @@ Note: you should check field values for ``None`` as some of them may be missing.
     bugs_and_chores_are_estimatable = PyBooleanField()
     commit_mode = PyBooleanField()
     last_activity_at = PyDateTimeField()
+
+    integrations = ListField(EmbeddedDocumentField(Integration))
+
+    xml_exclude = ['integrations']
 
     _tagname = 'project'
 
@@ -148,7 +186,7 @@ Note: you should check field values for ``None`` as some of them may be missing.
         if self.id is None:
             raise PyvotalException("Project does not have id")
         if not getattr(self, '_stories', None):
-            self._stories = StoryManager(self.client, self.id)
+            self._stories = StoryManager(self.client, self.id, self)
 
         return self._stories
 

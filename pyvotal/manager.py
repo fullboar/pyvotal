@@ -16,8 +16,9 @@
 
 
 class ResourceManager(object):
-    def __init__(self, client, cls, base_resource):
+    def __init__(self, client, cls, base_resource, project=None):
         self.client = client
+        self.project = project
         self.cls = cls
         self.base_resource = base_resource
 
@@ -66,6 +67,7 @@ class ResourceManager(object):
     def _obj_from_etree(self, etree):
         obj = self.cls()
         obj.client = self.client
+        obj.project = self.project
         obj._from_etree(etree)
         obj.endpoint = self.base_resource
         return obj

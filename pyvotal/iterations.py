@@ -32,11 +32,11 @@ class IterationManager(ResourceManager):
     Available as :attr:`Project.iterations <pyvotal.projects.Project.iterations>`
     """
 
-    def __init__(self, client, project_id):
+    def __init__(self, client, project_id, *args):
         self.client = client
 
         base_url = 'projects/%s/iterations' % project_id
-        super(IterationManager, self).__init__(client, Iteration, base_url)
+        super(IterationManager, self).__init__(client, Iteration, base_url, *args)
 
 
 class Iteration(PyvotalDocument):
@@ -71,6 +71,7 @@ Available fields:
         for tree in etree.findall(xpath):
             obj = Story()
             obj.client = self.client
+            obj.project = project
             obj._from_etree(tree)
             list_value.append(obj)
         setattr(self, 'stories', list_value)

@@ -30,15 +30,14 @@ from pyvotal.tasks import TaskManager
 
 
 class StoryManager(ResourceManager):
-    """
-    Class for stories management. Availeable as :attr:`Project.stories <pyvotal.projects.Project.stories>`
-    """
+    """Class for stories management.
+    Availeable as :attr:`Project.stories <pyvotal.projects.Project.stories>`"""
 
-    def __init__(self, client, project_id):
+    def __init__(self, client, project_id, *args):
         self.client = client
 
         base_url = 'projects/%s/stories' % project_id
-        super(StoryManager, self).__init__(client, Story, base_url)
+        super(StoryManager, self).__init__(client, Story, base_url, *args)
 
     def _contribute_to_all_request(self, url, params, **kwargs):
         if len(kwargs.keys()):
@@ -127,6 +126,9 @@ Available fields:
 +----------------------------------------+----------------------------------------+
 |attachments                             |list of :class:`Attachment`             |
 +----------------------------------------+----------------------------------------+
+
+Story could also have more fields depending on existing integrations in project.
+To get them use :attr:`Project.integrations`
 
     """
     project_id = IntField()
@@ -281,3 +283,14 @@ Available fields:
         else:
             story_id = story
         return self.move('before', story_id)
+
+    @property
+    def project(self):
+        return self._project
+
+    @project.setter
+    def project(self, value):
+        self._project = value
+        if value is not None:
+            for integration in self._project.integrations:
+                self._fields[integration.field_name] = StringField()

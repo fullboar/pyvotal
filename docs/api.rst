@@ -74,6 +74,10 @@ Projects
 	  print project.id, project.name
 
 
+.. autoclass:: pyvotal.projects.Integration
+   :members:
+
+
 .. autoclass:: pyvotal.projects.Project
    :members:
 
