@@ -19,7 +19,7 @@ Quick example:
     ptracker = PTracker(user='someuser', password='somepassword')
     
     project = p.projects.get(project_id)
-    story =  project.stories.get(project_id)
+    story =  project.stories.get(story_id)
     story.description = "New desc"
     story.save()
     story.add_note("Note text")
