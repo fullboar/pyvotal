@@ -40,7 +40,8 @@ class PTracker(object):
         self.client = Client(ssl=ssl)
         if token is None:
             token = self._get_token_for_credentials(user, password)
-        self.client.token = token
+        # One could pass unicode as token and it would break requests headers
+        self.client.token = str(token)
         self._projects = None
 
     @property
