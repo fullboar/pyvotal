@@ -24,5 +24,5 @@ setup(name='pyvotal',
     author_email = 'zz@rialabs.org',
     url = 'https://github.com/fullboar/pyvotal',
     packages = ['pyvotal',],
-    install_requires = ['requests', 'dictshield', 'python-dateutil<2']
+    install_requires = ['requests', 'dictshield==0.3.6', 'python-dateutil<2']
 )
