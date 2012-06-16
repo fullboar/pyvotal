@@ -71,7 +71,7 @@ Available fields:
         for tree in etree.findall(xpath):
             obj = Story()
             obj.client = self.client
-            obj.project = project
+            obj.project = self.project
             obj._from_etree(tree)
             list_value.append(obj)
         setattr(self, 'stories', list_value)
