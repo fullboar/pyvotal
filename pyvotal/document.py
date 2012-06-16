@@ -111,6 +111,8 @@ class PyvotalDocument(Document, XMLMixin):
     """
     Base class for pivotal objects representation
     """
+    class Meta:
+        id_field = IntField
 
 # py25 class decorator
 PyvotalDocument = diff_id_field(IntField, ['id'])(PyvotalDocument)
